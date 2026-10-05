@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Schmitt Chocolatier – Le Grand Œuf de Pâques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grandstander:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --bg:#fdf6ec; --bg-2:#f6e7d4; --card:#fffaf3; --ink:#3a2418; --muted:#7a5e4f;
+  --mint:#3f7d4e; --mint-soft:#dcefdc; --lemon:#f4c84a; --lemon-ink:#8a6400;
+  --pumpkin:#d6517d; --plum:#5a3420; --line:rgba(58,36,24,.16); --shadow:0 10px 30px rgba(90,52,32,.14);
+  --ok:#1f7a4d; --ko:#b3261e;
+  --display:'Grandstander','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;
+  --body:'Nunito','Segoe UI',system-ui,-apple-system,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1f1611; --bg-2:#2a1e17; --card:#2f221a; --ink:#f8efe2; --muted:#cdb9a8;
+    --mint:#7fcf8e; --mint-soft:#1f3a26; --lemon:#f6d36a; --lemon-ink:#f6d36a;
+    --pumpkin:#f08cad; --plum:#e9cdb6; --line:rgba(248,239,214,.14); --shadow:0 12px 34px rgba(0,0,0,.4);
+    --ok:#62d29a; --ko:#ff8a80;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1f1611; --bg-2:#2a1e17; --card:#2f221a; --ink:#f8efe2; --muted:#cdb9a8;
+  --mint:#7fcf8e; --mint-soft:#1f3a26; --lemon:#f6d36a; --lemon-ink:#f6d36a;
+  --pumpkin:#f08cad; --plum:#e9cdb6; --line:rgba(248,239,214,.14); --shadow:0 12px 34px rgba(0,0,0,.4);
+  --ok:#62d29a; --ko:#ff8a80;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;overflow-x:hidden}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--display);line-height:1.15;margin:0 0 .5em}
+h2{font-size:clamp(1.7rem,3.4vw,2.4rem);color:var(--mint)}
+h3{font-size:1.25rem}
+p{margin:0 0 1em}
+a{color:var(--mint)}
+:focus-visible{outline:3px solid var(--pumpkin);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.kicker{font-family:var(--display);color:var(--pumpkin);font-weight:700;font-size:1.05rem;margin-bottom:.2em}
+
+/* Top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:14px;min-height:60px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.brand{font-family:var(--display);font-weight:800;font-size:1.15rem;color:var(--mint);text-decoration:none;white-space:nowrap}
+.nav{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{text-decoration:none;color:var(--ink);font-weight:700;font-size:.9rem;padding:6px 11px;border-radius:999px;white-space:nowrap}
+.nav a:hover{background:var(--bg-2)}
+.btn{font:inherit;font-weight:800;border:0;border-radius:999px;padding:10px 18px;cursor:pointer;background:var(--mint);color:#fff;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn.lemon{background:var(--lemon);color:#2b1a33}
+.btn.small{padding:6px 12px;font-size:.88rem}
+.icon-btn{font-size:1.2rem;background:var(--bg-2);border:0;border-radius:50%;width:40px;height:40px;cursor:pointer;color:var(--ink)}
+
+/* Hero */
+.hero{position:relative;padding:34px 0 50px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(2.6rem,6.4vw,4.6rem);color:var(--ink);margin-bottom:.15em;letter-spacing:-.01em}
+.hero h1 .l2{display:block;color:var(--pumpkin)}
+.hero .sub{font-size:1.2rem;color:var(--muted);margin-bottom:1.2em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.chip{background:var(--mint-soft);color:var(--mint);font-weight:700;font-size:.85rem;padding:5px 12px;border-radius:999px}
+.idcard{background:var(--card);border-radius:22px;padding:18px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.idgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.f{display:flex;flex-direction:column;font-weight:700;font-size:.85rem;color:var(--muted);gap:4px}
+input,select,textarea{font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:9px 11px;width:100%}
+textarea{min-height:90px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--mint);outline:none}
+.save-note{font-size:.88rem;color:var(--muted);margin:12px 0 0}
+
+/* Shop window with lights */
+.shopframe{position:relative;border-radius:28px;overflow:hidden;box-shadow:var(--shadow);aspect-ratio:820/977;background:#120a16;max-width:500px;margin-left:auto}
+.shopframe img{width:100%;height:100%;object-fit:cover;transition:filter 1.6s ease;filter:brightness(var(--lit,.3)) saturate(var(--sat,.45))}
+.shopframe .glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 45% at 50% 62%,rgba(255,190,80,var(--glow,0)),transparent 70%);mix-blend-mode:screen;transition:background 1.6s ease}
+.shopframe figcaption{position:absolute;left:12px;bottom:12px;background:rgba(20,10,25,.72);color:#f8efd6;font-size:.78rem;padding:4px 10px;border-radius:999px}
+.bat{position:absolute;font-size:26px;pointer-events:none;animation:fly 9s linear infinite;opacity:.9;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}
+.bat.b2{font-size:18px;animation-duration:12s;animation-delay:-4s}
+.bat.b3{font-size:22px;animation-duration:15s;animation-delay:-9s}
+@keyframes fly{0%{transform:translate(-60px,120px) rotate(-8deg)}25%{transform:translate(160px,40px) rotate(6deg)}50%{transform:translate(360px,110px) rotate(-6deg)}75%{transform:translate(520px,30px) rotate(8deg)}100%{transform:translate(700px,90px) rotate(0)}}
+
+/* Jars progress */
+.jars{display:flex;gap:10px;margin:18px 0 6px;flex-wrap:wrap}
+.jar{width:48px;height:62px;position:relative;border-radius:12px 12px 16px 16px;border:3px solid var(--line);background:color-mix(in srgb,var(--card) 70%,transparent);overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+.jar::before{content:"";position:absolute;top:-3px;left:8px;right:8px;height:9px;background:var(--plum);border-radius:4px;opacity:.6}
+.jar .fill{position:absolute;left:0;right:0;bottom:0;height:0;transition:height 1s cubic-bezier(.3,1.4,.5,1);background:repeating-radial-gradient(circle at 30% 30%,var(--pumpkin) 0 5px,var(--lemon) 5px 9px,#7b3fa0 9px 12px)}
+.jar .d{position:relative;font-family:var(--display);font-weight:800;font-size:1.3rem;color:var(--muted);margin-bottom:12px;z-index:1}
+.jar.on{border-color:var(--pumpkin);box-shadow:0 0 16px rgba(240,138,62,.5)}
+.jar.on .fill{height:100%}
+.jar.on .d{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.jarlabel{font-weight:700;color:var(--muted);font-size:.92rem}
+
+/* Sections */
+section.block{padding:56px 0;border-top:1px dashed var(--line)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow)}
+.panel.real{border-left:6px solid var(--mint)}
+.panel.fiction{border-left:6px solid var(--pumpkin)}
+.panel h3{margin-bottom:.4em}
+.facts{list-style:none;margin:0;padding:0}
+.facts li{padding:8px 0;border-bottom:1px dashed var(--line)}
+.facts li:last-child{border-bottom:0}
+.src{font-size:.82rem;color:var(--muted)}
+.letter{background:var(--card);border-radius:20px;padding:22px 26px;border:2px dashed var(--pumpkin);position:relative;font-size:1.05rem}
+.letter .who{font-family:var(--display);color:var(--pumpkin);font-weight:700;margin-bottom:6px}
+.rules{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.rule{background:var(--bg-2);border-radius:16px;padding:14px;font-size:.95rem}
+.rule b.e{font-size:1.6rem;display:block}
+
+.levels .lv{cursor:pointer;text-align:left;font:inherit;color:inherit;border:3px solid transparent}
+.levels .lv[aria-pressed="true"]{border-color:var(--pumpkin)}
+.lv .big{font-size:2.2rem}
+
+/* Grimoire cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.flip{perspective:900px;min-height:170px}
+.flip .in{position:relative;width:100%;height:100%;min-height:170px;transition:transform .6s;transform-style:preserve-3d}
+.flip.open .in{transform:rotateY(180deg)}
+.flip .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;padding:16px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line)}
+.flip .front{background:var(--card);cursor:pointer;align-items:center;text-align:center}
+.flip .front .w{font-family:var(--display);font-weight:800;font-size:1.2rem;color:var(--mint)}
+.flip .front .e{font-size:1.8rem}
+.flip .back{background:var(--mint);color:#fff;transform:rotateY(180deg);font-size:.93rem;line-height:1.45;cursor:pointer}
+.know{display:flex;align-items:center;gap:6px;font-size:.85rem;margin-top:6px;font-weight:700}
+.know input{width:auto}
+
+/* Time's up */
+.timesup{display:grid;grid-template-columns:1fr 1.2fr;gap:22px;margin-top:30px;align-items:start}
+.tcard{background:var(--plum);color:var(--bg);border-radius:22px;padding:24px;text-align:center;min-height:230px;display:flex;flex-direction:column;justify-content:center}
+:root[data-theme="dark"] .tcard{color:#2b1a33}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tcard{color:#2b1a33}}
+.tcard .tw{font-family:var(--display);font-size:2rem;font-weight:800}
+.tcard .tban{margin-top:10px;font-size:.95rem;opacity:.9}
+.clock{font-family:var(--display);font-size:2.6rem;font-weight:800;color:var(--pumpkin)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* Missions */
+.pole-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.pole-head .pn{font-family:var(--display);font-weight:800;font-size:3.4rem;color:var(--lemon);line-height:1;-webkit-text-stroke:2px var(--mint)}
+.mission{background:var(--card);border:1px solid var(--line);border-radius:24px;margin-bottom:26px;box-shadow:var(--shadow);overflow:hidden}
+.mhead{display:flex;gap:14px;align-items:center;padding:18px 22px;background:var(--bg-2);flex-wrap:wrap}
+.mhead .me{font-size:2.2rem}
+.mhead h3{margin:0;font-size:1.35rem}
+.mhead .mn{font-size:.85rem;color:var(--muted);font-weight:700}
+.mhead .lvsel{margin-left:auto;display:flex;gap:4px;background:var(--card);padding:4px;border-radius:999px}
+.lvsel button{font:inherit;font-size:.82rem;font-weight:800;border:0;background:transparent;color:var(--muted);padding:6px 11px;border-radius:999px;cursor:pointer}
+.lvsel button[aria-pressed="true"]{background:var(--pumpkin);color:#fff}
+.mbody{padding:22px}
+.story{font-size:1.04rem;border-left:4px solid var(--lemon);padding-left:14px;margin-bottom:18px}
+.doc{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:16px}
+.doc .dt{font-family:var(--display);font-weight:700;color:var(--plum);margin-bottom:8px}
+.tw-scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;min-width:520px}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:middle}
+th{background:var(--bg-2);font-weight:800}
+td input,td select{padding:6px 8px;font-size:.93rem}
+td.num,th.num{text-align:right}
+.task{background:var(--mint-soft);border-radius:16px;padding:16px;margin-bottom:16px}
+.task .tt{font-weight:800;margin-bottom:8px;color:var(--mint)}
+.help{border-radius:14px;padding:12px 16px;margin-bottom:16px;background:color-mix(in srgb,var(--lemon) 22%,var(--card));border:1px solid color-mix(in srgb,var(--lemon) 60%,transparent)}
+.help .ht{font-weight:800;color:var(--lemon-ink)}
+.hint-list{margin:6px 0 0;padding-left:20px}
+.digitbox{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px;border-radius:16px;border:2px dashed var(--pumpkin);margin-top:6px}
+.digitbox input{width:64px;text-align:center;font-family:var(--display);font-size:1.6rem;font-weight:800}
+.digitbox .q{font-weight:800;flex:1 1 260px}
+.fb{font-weight:800;min-height:1.4em}
+.fb.ok{color:var(--ok)} .fb.ko{color:var(--ko)}
+.shake{animation:shake .45s}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.mission.done .mhead{background:color-mix(in srgb,var(--mint) 18%,var(--bg-2))}
+.badge{font-size:.8rem;font-weight:800;background:var(--mint);color:#fff;border-radius:999px;padding:3px 10px;display:none}
+.mission.done .badge{display:inline-block}
+
+/* labels M3 */
+.labels{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.ptag{background:#fff7d1;color:#2b1a33;border-radius:10px;padding:10px 12px;border:2px solid #e3c35a;position:relative;transform-origin:top center;animation:swing 4s ease-in-out infinite}
+.ptag:nth-child(2n){animation-delay:-1.3s}
+.ptag:nth-child(3n){animation-delay:-2.4s}
+.ptag::before{content:"";position:absolute;top:-8px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#7b3fa0}
+.ptag .pl{font-weight:800;font-size:.85rem}
+.ptag .pp{font-family:var(--display);font-size:1.5rem;font-weight:800;color:#c2410c}
+.ptag .pk{font-size:.8rem}
+@keyframes swing{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+
+/* gondola M4 */
+.gondola{display:grid;grid-template-columns:110px 1fr;gap:0;max-width:520px;border:3px solid var(--plum);border-radius:12px;overflow:hidden;font-size:.88rem}
+.gondola div{padding:10px;border-bottom:2px solid var(--plum)}
+.gondola .lvl{background:var(--bg-2);font-weight:800}
+.gondola div:nth-last-child(-n+2){border-bottom:0}
+
+/* dialogue M5 */
+.dlg{list-style:none;margin:0;padding:0}
+.dlg li{display:grid;grid-template-columns:32px 1fr auto;gap:10px;align-items:center;padding:10px;border-radius:12px;margin-bottom:8px;background:var(--bg)}
+.dlg .n{font-family:var(--display);font-weight:800;color:var(--pumpkin)}
+.dlg label{display:flex;gap:6px;align-items:center;font-weight:800;font-size:.85rem;color:var(--ko);white-space:nowrap}
+.dlg input{width:auto}
+.dlg li.flag{outline:2px solid var(--ko)}
+
+/* ticket M6 */
+.ticket{font-family:'Courier New',monospace;background:#fff;color:#222;max-width:320px;padding:16px;border-radius:4px;box-shadow:var(--shadow);font-size:.86rem;transform:rotate(-1.5deg);position:relative}
+.ticket::after{content:"";position:absolute;left:0;right:0;bottom:-10px;height:10px;background:linear-gradient(-45deg,transparent 7px,#fff 0) 0 0/14px 14px,linear-gradient(45deg,transparent 7px,#fff 0) 0 0/14px 14px}
+.ticket .tl{display:flex;justify-content:space-between}
+.ticket hr{border:0;border-top:1px dashed #999}
+.ticket .stamp{position:absolute;right:10px;top:40px;transform:rotate(14deg);color:#7b3fa0;border:2px solid #7b3fa0;padding:2px 8px;font-weight:800;border-radius:6px;opacity:.75}
+
+/* Final */
+.vault{text-align:center;background:var(--card);border-radius:28px;padding:34px 20px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.codein{display:flex;justify-content:center;gap:8px;margin:20px 0;flex-wrap:wrap}
+.codein input{width:52px;height:64px;text-align:center;font-family:var(--display);font-size:2rem;font-weight:800;border-width:3px}
+.lock{font-size:4rem;display:inline-block;transition:transform .6s}
+.vault.open .lock{transform:scale(1.25) rotate(-12deg)}
+.vault .status{font-family:var(--display);font-weight:800;font-size:1.3rem}
+.finale-img{max-width:360px;margin:20px auto 0;border-radius:20px;overflow:hidden;display:none;box-shadow:0 0 50px rgba(246,205,69,.55)}
+.vault.open .finale-img{display:block;animation:pop .9s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+
+.rain{position:fixed;top:-40px;font-size:28px;pointer-events:none;z-index:200;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+
+footer{padding:30px 0 50px;color:var(--muted);font-size:.88rem;text-align:center;border-top:1px dashed var(--line)}
+
+@media (max-width:860px){
+  .hero-grid,.grid2,.timesup{grid-template-columns:1fr}
+  .grid3,.rules{grid-template-columns:1fr 1fr}
+  .shopframe{margin:0 auto;max-width:420px}
+}
+@media (max-width:520px){
+  .grid3,.rules,.idgrid{grid-template-columns:1fr}
+  .mhead .lvsel{margin-left:0}
+  .nav{order:3;flex-basis:100%}
+  .brand{flex:1}
+  .jar{width:40px;height:54px}
+  .dlg li{grid-template-columns:26px 1fr}
+  .dlg li label{grid-column:2}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .bat{display:none}
+}
+/* ---------- Ajouts : enseignante, vitrine, étapes ---------- */
+[hidden]{display:none!important}
+.teach{font-size:.85rem;color:var(--muted);white-space:nowrap}
+@media (max-width:1100px){.teach{display:none}}
+.credit{font-weight:700;color:var(--muted);margin:-.2em 0 .8em}
+.shopcol{max-width:500px;margin-left:auto;width:100%}
+.shopcol .shopframe{margin-left:0;max-width:none}
+.relight{margin:14px 0 0;background:var(--card);border:2px dashed var(--lemon);border-radius:16px;padding:12px 16px;font-size:.98rem;line-height:1.5}
+.relight a{color:var(--pumpkin);font-weight:800}
+@media (max-width:860px){.shopcol{margin:0 auto;max-width:420px}}
+footer a{color:var(--mint);font-weight:800}
+.stepbar{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+.stepbar button{font:inherit;font-size:.85rem;font-weight:800;display:flex;align-items:center;gap:7px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 12px 4px 4px;cursor:pointer}
+.stepbar button span{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--bg-2)}
+.stepbar button.cur{border-color:var(--pumpkin)}
+.stepbar button.cur span{background:var(--pumpkin);color:#fff}
+.stepbar button.ok span{background:var(--mint);color:#fff}
+.stepbar button:disabled{opacity:.45;cursor:not-allowed}
+.steptitle{font-family:var(--display);font-weight:800;font-size:1.2rem;color:var(--mint);border-left:6px solid var(--lemon);padding-left:12px;margin:0 0 14px}
+.stepnav{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:2px dashed var(--line);padding-top:16px;margin-top:6px}
+.stepnav .btn{font-size:1.05rem;padding:12px 24px}
+.need{flex:1 1 220px;text-align:center;font-weight:800;color:var(--muted)}
+.need.ko{color:var(--ko)}
+.missing{outline:3px solid var(--ko)!important;outline-offset:2px;background:color-mix(in srgb,var(--ko) 10%,var(--bg))!important}
+.confirm{display:flex;gap:10px;align-items:center;font-weight:800;margin-top:12px;background:var(--card);border-radius:12px;padding:10px 12px;border:2px solid var(--line)}
+.confirm input{width:auto}
+.locked-note{padding:22px;text-align:center;font-weight:800;color:var(--muted);font-size:1.05rem}
+.mission.locked{opacity:.75}
+.mission.locked .lvsel{display:none}
+.nextm{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-top:16px;padding:14px 16px;border-radius:16px;background:var(--mint-soft);border:2px solid var(--mint)}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--plum);color:var(--bg);font-weight:800;padding:12px 18px;border-radius:14px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:300;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.corrige{margin-top:18px}
+.corrige h3{color:var(--mint);margin-top:18px}
+.corrige p{margin:.5em 0}
+.cor-code{font-family:var(--display);font-size:1.3rem;background:var(--mint-soft);border-radius:12px;padding:10px 14px}
+/* Un seul niveau */
+.lvsel{display:none!important}
+/* Parcours */
+.path{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pgrp{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow)}
+.pgrp h3{font-size:1.05rem;color:var(--mint);margin:0 0 10px}
+.pgrp h3 b{color:var(--pumpkin)}
+.pm{display:flex;align-items:center;gap:10px;width:100%;font:inherit;font-weight:700;text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:8px 10px;margin-bottom:8px;cursor:pointer;color:var(--ink)}
+.pm .ic{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;font-weight:800;background:var(--bg-2)}
+.pm small{display:block;color:var(--muted);font-weight:700}
+.pm.done{border-color:var(--mint)} .pm.done .ic{background:var(--mint);color:#fff}
+.pm.now{border-color:var(--pumpkin);box-shadow:0 0 0 3px color-mix(in srgb,var(--pumpkin) 25%,transparent)} .pm.now .ic{background:var(--pumpkin);color:#fff}
+.pm.lock{opacity:.55;cursor:not-allowed}
+@media (max-width:860px){.path{grid-template-columns:1fr}}
+/* Titre animé */
+.brandtitle{position:relative;font-size:clamp(3.6rem,10vw,6.6rem);line-height:.95;margin:.1em 0 .1em;letter-spacing:.01em}
+.brandtitle .bt{display:inline-block;white-space:nowrap;position:relative}
+.brandtitle .w1{color:var(--mint)}
+.brandtitle .w2{color:var(--lemon);-webkit-text-stroke:3px #4a2a55;paint-order:stroke fill;animation:lantern 2.6s ease-in-out infinite}
+.brandtitle .ch{display:inline-block;animation:drop .9s cubic-bezier(.3,1.6,.5,1) both,wave 3.4s ease-in-out infinite;animation-delay:calc(var(--d)*.09s),calc(1.4s + var(--d)*.16s)}
+@keyframes drop{0%{opacity:0;transform:translateY(-1.2em) rotate(-25deg)}100%{opacity:1;transform:none}}
+@keyframes wave{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-.08em) rotate(-3deg)}}
+@keyframes lantern{0%,100%{text-shadow:0 0 18px rgba(240,138,62,.75)}45%{text-shadow:0 0 6px rgba(240,138,62,.35)}50%{text-shadow:0 0 28px rgba(255,170,60,.95)}55%{text-shadow:0 0 10px rgba(240,138,62,.5)}}
+.spider{position:absolute;top:-.25em;right:-.75em;font-size:.3em;display:flex;flex-direction:column;align-items:center;animation:spider 4.5s ease-in-out infinite}
+.spider i{display:block;width:2px;height:1.8em;background:var(--muted);opacity:.7}
+@keyframes spider{0%,100%{transform:translateY(0)}50%{transform:translateY(1em)}}
+.tbat{position:absolute;top:.2em;left:0;font-size:.36em;opacity:0;animation:tbat 7s linear 2.2s infinite;pointer-events:none}
+@keyframes tbat{0%{opacity:0;transform:translate(-1em,1.5em) rotate(-10deg)}8%{opacity:1}50%{transform:translate(6em,-.6em) rotate(8deg)}92%{opacity:1}100%{opacity:0;transform:translate(13em,.8em) rotate(-5deg)}}
+.bocaltitle{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,3.2vw,2.1rem);color:var(--ink);margin:.25em 0 .3em}
+.bocaltitle span{color:var(--pumpkin)}
+/* Vitrine qui s'allume, scintille, clignote */
+.shopframe .bulbs,.shopframe .sparks{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .6s}
+.shopframe.lit .bulbs,.shopframe.lit .sparks{opacity:1}
+.bulbs i{position:absolute;top:10px;left:var(--x);width:14px;height:14px;border-radius:50%;background:#f6cd45;box-shadow:0 0 12px 4px rgba(246,205,69,.8);animation:bulb 1s steps(1,end) infinite;animation-delay:calc(var(--k)*-.5s)}
+.bulbs i:nth-child(3n){background:#f08a3e;box-shadow:0 0 12px 4px rgba(240,138,62,.85)}
+.bulbs i:nth-child(3n+1){background:#c58be0;box-shadow:0 0 12px 4px rgba(197,139,224,.85)}
+@keyframes bulb{0%{opacity:1}50%{opacity:.15}}
+.sparks b{position:absolute;font-size:22px;font-weight:400;animation:spark 1.8s ease-in-out infinite;animation-delay:calc(var(--k)*.27s)}
+@keyframes spark{0%,100%{transform:scale(.2) rotate(0);opacity:0}45%{transform:scale(1.15) rotate(25deg);opacity:1}70%{opacity:.8}}
+.shopframe.lit{animation:frame 2.4s ease-in-out infinite;box-shadow:0 0 0 4px #f2c230,0 0 60px rgba(255,190,80,.7)}
+@keyframes frame{0%,100%{box-shadow:0 0 0 4px #f2c230,0 0 40px rgba(255,190,80,.55)}50%{box-shadow:0 0 0 4px #f08a3e,0 0 90px rgba(255,170,60,.95)}}
+.shopframe.lit img{animation:ignite 2.4s linear 1 both,shine 3s ease-in-out 2.4s infinite}
+@keyframes ignite{0%{filter:brightness(.3) saturate(.45)}8%{filter:brightness(1.2) saturate(1.1)}14%{filter:brightness(.35) saturate(.5)}24%{filter:brightness(1.15) saturate(1.1)}30%{filter:brightness(.4) saturate(.5)}46%{filter:brightness(1.25) saturate(1.2)}52%{filter:brightness(.7) saturate(.9)}64%,100%{filter:brightness(1.05) saturate(1.1)}}
+@keyframes shine{0%,100%{filter:brightness(1.02) saturate(1.08)}50%{filter:brightness(1.16) saturate(1.22)}}
+.shopframe.lit .glow{animation:glowp 2s ease-in-out infinite}
+@keyframes glowp{50%{opacity:.55}}
+/* ===== Scénario 6 : Pâques ===== */
+.brandtitle{font-size:clamp(2.4rem,6.2vw,4.5rem)}
+.brandtitle .w2{-webkit-text-stroke:3px #5a3420;color:var(--pumpkin)}
+@keyframes lantern{0%,100%{text-shadow:0 0 16px rgba(244,200,74,.75)}45%{text-shadow:0 0 6px rgba(244,200,74,.35)}50%{text-shadow:0 0 26px rgba(255,214,110,.95)}55%{text-shadow:0 0 10px rgba(244,200,74,.5)}}
+@keyframes drop{0%{opacity:0;transform:translateY(-1.4em) scale(.6)}60%{opacity:1;transform:translateY(.12em) scale(1.08,.9)}100%{opacity:1;transform:none}}
+@keyframes wave{0%,100%{transform:translateY(0)}40%{transform:translateY(-.12em) scale(1.03,.97)}55%{transform:translateY(0)}}
+.spider{animation:bell 2.6s ease-in-out infinite;transform-origin:top center}
+.spider i{background:#d6517d;height:1.4em;width:3px}
+@keyframes bell{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}}
+.tbat{animation:hop 8s linear 2.2s infinite}
+@keyframes hop{0%{opacity:0;transform:translate(-1em,1.6em)}6%{opacity:1}12%{transform:translate(1em,.6em)}18%{transform:translate(2.5em,1.6em)}30%{transform:translate(4em,.6em)}36%{transform:translate(5.5em,1.6em)}48%{transform:translate(7em,.6em)}54%{transform:translate(8.5em,1.6em)}66%{transform:translate(10em,.6em)}72%{transform:translate(11.5em,1.6em)}90%{opacity:1}100%{opacity:0;transform:translate(14em,1.6em)}}
+.jar{border-radius:50% 50% 46% 46% / 60% 60% 40% 40%;width:44px;height:58px}
+.jar::before{display:none}
+.jar .fill{background:linear-gradient(160deg,#8a5634,#4a2716)}
+.jar.on{border-color:var(--pumpkin);box-shadow:0 0 14px rgba(214,81,125,.45)}
+.jars{gap:8px}
+@media (max-width:600px){.jar{width:34px;height:46px}}
+.bulbs i{background:#f4c84a}
+.bulbs i:nth-child(3n){background:#f4a7b9;box-shadow:0 0 12px 4px rgba(244,167,185,.85)}
+.bulbs i:nth-child(3n+1){background:#a8d8b9;box-shadow:0 0 12px 4px rgba(168,216,185,.85)}
+
+/* ===== Le Grand Œuf à décorer ===== */
+.eggcol{max-width:440px;margin-left:auto;width:100%;text-align:center}
+@media (max-width:860px){.eggcol{margin:0 auto;max-width:360px}}
+.egg{position:relative;width:100%;max-width:380px;margin:0 auto}
+.egg svg{width:100%;height:auto;display:block;overflow:visible}
+.egg .dec{opacity:0;transform:scale(.3);transform-box:fill-box;transform-origin:center;transition:opacity .6s,transform .8s cubic-bezier(.3,1.6,.5,1)}
+.egg.on1 .d1{opacity:1;transform:none}
+.egg.on2 .d2{opacity:1;transform:none}
+.egg.on3 .d3{opacity:1;transform:none}
+.egg.on4 .d4{opacity:1;transform:none}
+.egg.on5 .d5{opacity:1;transform:none}
+.egg.on6 .d6{opacity:1;transform:none}
+.egg.on7 .d7{opacity:1;transform:none}
+.egg.on8 .d8{opacity:1;transform:none}
+.egg.on9 .d9{opacity:1;transform:none}
+
+.egg .tw{animation:twinkle 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes twinkle{0%,100%{opacity:.25;transform:scale(.6)}50%{opacity:1;transform:scale(1.15)}}
+.egg .crack{opacity:0;transition:opacity .4s}
+.egg.on9 .crack,.egg.open .crack{opacity:.6}
+.egg:not(.open) svg{animation:wobble 4.5s ease-in-out infinite;transform-origin:50% 95%}
+@keyframes wobble{0%,80%,100%{transform:rotate(0)}84%{transform:rotate(-3deg)}88%{transform:rotate(3deg)}92%{transform:rotate(-2deg)}96%{transform:rotate(1deg)}}
+.egg .top{transition:transform 1.4s cubic-bezier(.3,1.4,.5,1);transform-box:fill-box;transform-origin:10% 100%}
+.egg.open .top{transform:translate(-30px,-40px) rotate(-32deg)}
+.egg .surprise{opacity:0;transform:translateY(90px) scale(.6);transform-box:fill-box;transform-origin:center bottom;transition:opacity .8s .7s,transform 1.1s .7s cubic-bezier(.3,1.6,.5,1)}
+.egg.open .surprise{opacity:1;transform:none}
+.eggcap{display:inline-block;margin-top:6px;font-family:var(--display);font-weight:800;color:var(--mint);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 14px;font-size:.95rem}
+.relight{text-align:left}
+.egg .bot,.egg .top{opacity:0}
+.egg.open .bot,.egg.open .top,.egg.blast .bot,.egg.blast .top{opacity:1}
+.egg.open .whole,.egg.blast .whole{opacity:0}
+/* Sans indices */
+.help.hints{display:none!important}
+/* Auto-évaluation */
+.aebox .aecrit{border:1px solid var(--line);border-radius:16px;padding:12px;margin:0 0 12px;background:var(--bg)}
+.aebox legend{padding:0 6px;line-height:1.35}
+.aebox legend span{color:var(--muted);font-size:.92rem}
+.aeopts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+@media (max-width:760px){.aeopts{grid-template-columns:1fr 1fr}}
+@media (max-width:420px){.aeopts{grid-template-columns:1fr}}
+.aeopt{display:flex;flex-direction:column;gap:4px;border:2px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer;background:var(--card);font-size:.9rem;line-height:1.35}
+.aeopt input{position:absolute;opacity:0;pointer-events:none}
+.aeopt .aep{font-family:var(--display);font-weight:800}
+.aeopt.p1 .aep{color:#b3261e}.aeopt.p2 .aep{color:#c26a00}.aeopt.p3 .aep{color:#2f7a3d}.aeopt.p4 .aep{color:#1f5f9e}
+.aeopt:has(input:checked){border-color:var(--pumpkin);background:color-mix(in srgb,var(--pumpkin) 12%,var(--card));box-shadow:0 0 0 3px color-mix(in srgb,var(--pumpkin) 25%,transparent)}
+.aeopt:has(input:focus-visible){outline:3px solid var(--pumpkin);outline-offset:2px}
+.aetxt{display:flex;flex-direction:column;gap:6px}
+/* ===== Titre qui dégouline de chocolat ===== */
+.brandtitle{margin-bottom:.8em;padding-top:.1em}
+.brandtitle .w1{margin-bottom:.32em}
+.brandtitle .bt{position:relative;filter:drop-shadow(0 .04em 0 rgba(255,255,255,.35)) drop-shadow(0 .08em .06em rgba(58,31,16,.35))}
+.brandtitle .w1 .ch{background:linear-gradient(180deg,#8a5634 0%,#5c3317 45%,#3e2010 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brandtitle .w2{-webkit-text-stroke:0;animation:none}
+.brandtitle .w2 .ch{background:linear-gradient(180deg,#c58a5a 0%,#9a6238 40%,#6b3c20 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brandtitle .ch{animation:drop .9s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(var(--d)*.09s)}
+.drip{position:absolute;top:.8em;width:.12em;height:0;border-radius:0 0 .07em .07em;background:linear-gradient(90deg,#3e2010,#6b3c20 45%,#3e2010);animation:dripgrow 2.8s cubic-bezier(.5,0,.3,1) var(--d) forwards;transform:translateX(-50%)}
+.w2 .drip{top:.78em;background:linear-gradient(90deg,#6b3c20,#a0663b 45%,#6b3c20)}
+.drip::after{content:"";position:absolute;left:50%;bottom:-.07em;width:.17em;height:.17em;border-radius:50%;background:inherit;transform:translateX(-50%)}
+.drip::before{content:"";position:absolute;left:50%;top:100%;width:.1em;height:.14em;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#5c3317;transform:translate(-50%,0);opacity:0;animation:dropfall 3.4s ease-in calc(var(--d) + 3s) infinite}
+@keyframes dripgrow{0%{height:0}100%{height:var(--h)}}
+@keyframes dropfall{0%{opacity:0;transform:translate(-50%,0) scale(.4)}12%{opacity:1;transform:translate(-50%,.05em) scale(1)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,1.3em) scale(1)}}
+@media (prefers-reduced-motion: reduce){.drip{height:var(--h)}.drip::before{display:none}}
+/* ===== Grand final ===== */
+#fxCanvas{position:fixed;inset:0;pointer-events:none;z-index:400}
+.flash{position:fixed;inset:0;background:radial-gradient(circle,#fff,#fff6c8 40%,rgba(255,246,200,0) 75%);z-index:390;pointer-events:none;animation:flash .9s ease-out forwards}
+@keyframes flash{0%{opacity:0}10%{opacity:1}100%{opacity:0}}
+body.quake{animation:quake .6s linear}
+@keyframes quake{0%,100%{transform:none}10%{transform:translate(-8px,4px)}20%{transform:translate(7px,-5px)}30%{transform:translate(-6px,-3px)}40%{transform:translate(6px,5px)}50%{transform:translate(-4px,2px)}60%{transform:translate(4px,-3px)}80%{transform:translate(-2px,1px)}}
+.egg.shaking svg{animation:eggshake .11s linear infinite!important}
+@keyframes eggshake{0%{transform:rotate(-4deg) translateX(-3px)}50%{transform:rotate(4deg) translateX(3px)}100%{transform:rotate(-4deg) translateX(-3px)}}
+.egg.blast .top{animation:topfly 1.6s cubic-bezier(.2,.8,.3,1)}
+@keyframes topfly{0%{transform:none}35%{transform:translate(-90px,-330px) rotate(-300deg)}100%{transform:translate(-30px,-40px) rotate(-32deg)}}
+.egg.blast .surprise{animation:chickpop 1.4s cubic-bezier(.3,1.8,.5,1) .3s both}
+@keyframes chickpop{0%{opacity:0;transform:translateY(120px) scale(.3)}60%{opacity:1;transform:translateY(-30px) scale(1.25)}100%{opacity:1;transform:none}}
+.egg.open .surprise circle{animation:halo 2.4s ease-in-out infinite}
+@keyframes halo{50%{opacity:.6}}
+#bravo{position:fixed;inset:0;display:grid;place-items:center;z-index:420;pointer-events:none;opacity:0}
+#bravo.on{opacity:1;pointer-events:auto;animation:bvfade 5.2s ease forwards}
+@keyframes bvfade{0%{opacity:0}6%{opacity:1}85%{opacity:1}100%{opacity:0}}
+#bravo .bv{text-align:center;background:linear-gradient(135deg,#5c3317,#8a5634);color:#fff6c8;padding:22px 30px;border-radius:28px;border:4px solid #f4c84a;box-shadow:0 0 0 6px rgba(244,200,74,.35),0 30px 80px rgba(0,0,0,.45);transform:scale(.3) rotate(-8deg)}
+#bravo.on .bv{animation:bvpop 1s cubic-bezier(.3,1.8,.5,1) forwards}
+@keyframes bvpop{to{transform:none}}
+#bravo .b1{display:block;font-family:var(--display);font-weight:800;font-size:clamp(2rem,7vw,4rem);text-shadow:0 0 18px rgba(244,200,74,.9)}
+#bravo .b2{display:block;margin-top:6px;font-weight:700}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">🐣 Schmitt Chocolatier 🍫</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#boutique">La boutique</a>
+            <a href="#grimoire">Le Ballotin</a>
+      <a href="#parcours">Mon parcours</a>
+      <a href="#bocal">Le Grand Œuf</a>
+      <a href="#prof">🔑 Enseignante</a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" aria-label="Changer de thème clair / sombre">🌙</button>
+    <button class="btn small" id="pdfBtn">📄 Mon travail (PDF)</button>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="kicker">Première CAP Équipier polyvalent du commerce – Opération Pâques · BC2 – BC3</p>
+      <h1 class="brandtitle" aria-label="Schmitt Chocolatier"><span class="bt w1" aria-hidden="true"><span class="ch" style="--d:0">S</span><span class="ch" style="--d:1">c</span><span class="ch" style="--d:2">h</span><span class="ch" style="--d:3">m</span><span class="ch" style="--d:4">i</span><span class="ch" style="--d:5">t</span><span class="ch" style="--d:6">t</span><span class="spider"><i></i>🔔</span><i class="drip" style="left:9%;--h:0.22em;--d:0.9s"></i><i class="drip" style="left:28%;--h:0.36em;--d:1.6s"></i><i class="drip" style="left:46%;--h:0.18em;--d:2.3s"></i><i class="drip" style="left:64%;--h:0.3em;--d:1.2s"></i><i class="drip" style="left:86%;--h:0.25em;--d:2.0s"></i></span><br aria-hidden="true"><span class="bt w2" aria-hidden="true"><span class="ch" style="--d:7">C</span><span class="ch" style="--d:8">h</span><span class="ch" style="--d:9">o</span><span class="ch" style="--d:10">c</span><span class="ch" style="--d:11">o</span><span class="ch" style="--d:12">l</span><span class="ch" style="--d:13">a</span><span class="ch" style="--d:14">t</span><span class="ch" style="--d:15">i</span><span class="ch" style="--d:16">e</span><span class="ch" style="--d:17">r</span><i class="drip" style="left:5%;--h:0.55em;--d:1.1s"></i><i class="drip" style="left:17%;--h:0.32em;--d:1.9s"></i><i class="drip" style="left:31%;--h:0.7em;--d:1.4s"></i><i class="drip" style="left:45%;--h:0.4em;--d:2.4s"></i><i class="drip" style="left:57%;--h:0.62em;--d:1.0s"></i><i class="drip" style="left:70%;--h:0.3em;--d:2.1s"></i><i class="drip" style="left:83%;--h:0.5em;--d:1.7s"></i><i class="drip" style="left:95%;--h:0.36em;--d:2.6s"></i></span><span class="tbat" aria-hidden="true">🐇</span></h1>
+      <p class="bocaltitle">Le Grand Œuf <span>de Pâques</span></p>
+      <p class="credit">Réalisé par Mme LEGER Isabelle</p>
+      <p class="sub">Opération Pâques chez Schmitt Chocolatier, 18 rue Gambetta à Nancy, à deux pas de la place Stanislas.</p>
+      <div class="letter" style="margin:0 0 14px"><div class="who">🎯 Problématique du scénario</div>« Comment dynamiser les ventes de Pâques et offrir une expérience client gourmande et attractive ? »</div>
+      <div class="chips">
+        <span class="chip">Pôle 1 · Mettre en valeur l'offre de Pâques (BC2)</span>
+        <span class="chip">Pôle 2 · Conseiller le client et valoriser les produits (BC3)</span>
+        <span class="chip">Pôle 3 · Animer et créer l'ambiance du point de vente (BC2)</span>
+      </div>
+      <div class="idcard">
+        <div class="idgrid">
+          <label class="f">Nom<input data-k="id_nom" data-label="Nom" autocomplete="family-name"></label>
+          <label class="f">Prénom<input data-k="id_prenom" data-label="Prénom" autocomplete="given-name"></label>
+        </div>
+        <div class="jars" id="jars" aria-label="Chiffres du code retrouvés"></div>
+        <div class="jarlabel" id="jarlabel">Œufs vides · 0/9 chiffres retrouvés</div>
+        <p class="save-note">💾 Ton travail s'enregistre automatiquement sur cet ordinateur. À la fin, clique sur « 📄 Mon travail (PDF) » pour le rendre à ton enseignant(e).</p>
+      </div>
+    </div>
+    <div class="eggcol"><div class="egg" id="egg"><svg viewBox="0 0 400 500" role="img" aria-labelledby="eggT"><title id="eggT">Le Grand Œuf en chocolat, qui se décore à chaque mission réussie</title>
+<defs>
+<linearGradient id="choc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a6238"/><stop offset=".55" stop-color="#6b3c20"/><stop offset="1" stop-color="#3e2010"/></linearGradient>
+<radialGradient id="gold" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#f4c84a" stop-opacity="0"/></radialGradient>
+<clipPath id="eggC"><path d="M200 30 C305 30 360 210 360 305 C360 405 290 470 200 470 C110 470 40 405 40 305 C40 210 95 30 200 30 Z"/></clipPath>
+<clipPath id="topC"><polygon points="0,0 400,0 400,260 380,272 350,246 320,272 290,246 260,272 230,246 200,272 170,246 140,272 110,246 80,272 50,246 20,272 0,260"/></clipPath>
+<clipPath id="botC"><polygon points="0,260 20,272 50,246 80,272 110,246 140,272 170,246 200,272 230,246 260,272 290,246 320,272 350,246 380,272 400,260 400,500 0,500"/></clipPath>
+</defs>
+<ellipse cx="200" cy="482" rx="140" ry="14" fill="#3a2418" opacity=".18"/>
+<g class="surprise"><circle cx="200" cy="250" r="150" fill="url(#gold)"/><text x="200" y="300" text-anchor="middle" font-size="120">🐣</text></g>
+<g class="whole"><path d="M200 30 C305 30 360 210 360 305 C360 405 290 470 200 470 C110 470 40 405 40 305 C40 210 95 30 200 30 Z" fill="url(#choc)" stroke="#3a1f10" stroke-width="4"/><path d="M120 120 Q150 70 200 62" fill="none" stroke="#c58a5a" stroke-width="10" stroke-linecap="round" opacity=".55"/><g clip-path="url(#eggC)"><g class="dec d1"><rect x="0" y="328" width="400" height="30" fill="#d6517d"/><rect x="0" y="326" width="400" height="4" fill="#f4c84a"/><rect x="0" y="356" width="400" height="4" fill="#f4c84a"/></g><g class="dec d2"><ellipse cx="172" cy="78" rx="30" ry="17" fill="#d6517d" stroke="#9e3157" stroke-width="2" transform="rotate(-18 172 78)"/><ellipse cx="228" cy="78" rx="30" ry="17" fill="#d6517d" stroke="#9e3157" stroke-width="2" transform="rotate(18 228 78)"/><path d="M190 88 L176 120 L192 112 Z M210 88 L224 120 L208 112 Z" fill="#d6517d"/><circle cx="200" cy="82" r="11" fill="#f4c84a" stroke="#a87b00" stroke-width="2"/></g><g class="dec d3"><polyline points="30,200 55,178 80,200 105,178 130,200 155,178 180,200 205,178 230,200 255,178 280,200 305,178 330,200 355,178 380,200" fill="none" stroke="#fdf3e1" stroke-width="7" stroke-linejoin="round"/></g><g class="dec d4"><circle cx="95" cy="395" r="7" fill="#fdf3e1"/><circle cx="130" cy="420" r="6" fill="#fdf3e1"/><circle cx="165" cy="445" r="7" fill="#fdf3e1"/><circle cx="110" cy="440" r="5" fill="#fdf3e1"/><circle cx="150" cy="390" r="5" fill="#fdf3e1"/><circle cx="200" cy="410" r="6" fill="#fdf3e1"/><circle cx="235" cy="445" r="5" fill="#fdf3e1"/></g><g class="dec d5"><circle cx="131.0" cy="292.0" r="9" fill="#f4a7b9"/><circle cx="123.4" cy="302.5" r="9" fill="#f4a7b9"/><circle cx="111.1" cy="298.5" r="9" fill="#f4a7b9"/><circle cx="111.1" cy="285.5" r="9" fill="#f4a7b9"/><circle cx="123.4" cy="281.5" r="9" fill="#f4a7b9"/><circle cx="120" cy="292" r="7" fill="#f4c84a"/><circle cx="293.0" cy="292.0" r="9" fill="#c9b6e8"/><circle cx="285.4" cy="302.5" r="9" fill="#c9b6e8"/><circle cx="273.1" cy="298.5" r="9" fill="#c9b6e8"/><circle cx="273.1" cy="285.5" r="9" fill="#c9b6e8"/><circle cx="285.4" cy="281.5" r="9" fill="#c9b6e8"/><circle cx="282" cy="292" r="7" fill="#f4c84a"/><circle cx="211.0" cy="230.0" r="9" fill="#a8d8b9"/><circle cx="203.4" cy="240.5" r="9" fill="#a8d8b9"/><circle cx="191.1" cy="236.5" r="9" fill="#a8d8b9"/><circle cx="191.1" cy="223.5" r="9" fill="#a8d8b9"/><circle cx="203.4" cy="219.5" r="9" fill="#a8d8b9"/><circle cx="200" cy="230" r="7" fill="#f4c84a"/></g><g class="dec d6"><polygon points="130.0,134.0 133.7,142.9 143.3,143.7 136.0,149.9 138.2,159.3 130.0,154.3 121.8,159.3 124.0,149.9 116.7,143.7 126.3,142.9" fill="#f4c84a" stroke="#a87b00" stroke-width="1"/><polygon points="272.0,128.0 275.2,135.6 283.4,136.3 277.1,141.7 279.1,149.7 272.0,145.4 264.9,149.7 266.9,141.7 260.6,136.3 268.8,135.6" fill="#f4c84a" stroke="#a87b00" stroke-width="1"/><polygon points="205.0,151.0 207.4,156.7 213.6,157.2 208.9,161.3 210.3,167.3 205.0,164.1 199.7,167.3 201.1,161.3 196.4,157.2 202.6,156.7" fill="#ffe28a" stroke="#a87b00" stroke-width="1"/><polygon points="95.0,221.0 97.4,226.7 103.6,227.2 98.9,231.3 100.3,237.3 95.0,234.1 89.7,237.3 91.1,231.3 86.4,227.2 92.6,226.7" fill="#ffe28a" stroke="#a87b00" stroke-width="1"/><polygon points="310.0,218.0 312.6,224.4 319.5,224.9 314.3,229.4 315.9,236.1 310.0,232.5 304.1,236.1 305.7,229.4 300.5,224.9 307.4,224.4" fill="#f4c84a" stroke="#a87b00" stroke-width="1"/></g><g class="dec d7"><g fill="#fffaf3" stroke="#5a3420" stroke-width="2"><ellipse cx="292" cy="372" rx="8" ry="22"/><ellipse cx="310" cy="372" rx="8" ry="22"/><circle cx="301" cy="408" r="22"/></g><circle cx="294" cy="404" r="3" fill="#5a3420"/><circle cx="308" cy="404" r="3" fill="#5a3420"/><ellipse cx="301" cy="414" rx="4" ry="3" fill="#d6517d"/></g><g class="dec d8"><ellipse cx="100" cy="300" rx="14" ry="6" fill="#5c9d6a" transform="rotate(-30 100 300)"/><ellipse cx="142" cy="306" rx="14" ry="6" fill="#5c9d6a" transform="rotate(30 142 306)"/><ellipse cx="262" cy="306" rx="14" ry="6" fill="#5c9d6a" transform="rotate(-30 262 306)"/><ellipse cx="304" cy="300" rx="14" ry="6" fill="#5c9d6a" transform="rotate(30 304 300)"/><ellipse cx="182" cy="244" rx="12" ry="5" fill="#5c9d6a" transform="rotate(-25 182 244)"/><ellipse cx="218" cy="244" rx="12" ry="5" fill="#5c9d6a" transform="rotate(25 218 244)"/></g><g class="dec d9"><g class="tw" style="animation-delay:0.00s"><path d="M80 180 Q80 190 90 190 Q80 190 80 200 Q80 190 70 190 Q80 190 80 180 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:0.35s"><path d="M330 311 Q330 320 339 320 Q330 320 330 329 Q330 320 321 320 Q330 320 330 311 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:0.70s"><path d="M240 102 Q240 110 248 110 Q240 110 240 118 Q240 110 232 110 Q240 110 240 102 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:1.05s"><path d="M160 341 Q160 350 169 350 Q160 350 160 359 Q160 350 151 350 Q160 350 160 341 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:1.40s"><path d="M250 412 Q250 420 258 420 Q250 420 250 428 Q250 420 242 420 Q250 420 250 412 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:1.75s"><path d="M60 313 Q60 320 67 320 Q60 320 60 327 Q60 320 53 320 Q60 320 60 313 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:2.10s"><path d="M340 182 Q340 190 348 190 Q340 190 340 198 Q340 190 332 190 Q340 190 340 182 Z" fill="#fff6c8"/></g></g></g></g>
+<g class="bot" clip-path="url(#botC)"><path d="M200 30 C305 30 360 210 360 305 C360 405 290 470 200 470 C110 470 40 405 40 305 C40 210 95 30 200 30 Z" fill="url(#choc)" stroke="#3a1f10" stroke-width="4"/><path d="M120 120 Q150 70 200 62" fill="none" stroke="#c58a5a" stroke-width="10" stroke-linecap="round" opacity=".55"/><g clip-path="url(#eggC)"><g class="dec d1"><rect x="0" y="328" width="400" height="30" fill="#d6517d"/><rect x="0" y="326" width="400" height="4" fill="#f4c84a"/><rect x="0" y="356" width="400" height="4" fill="#f4c84a"/></g><g class="dec d2"><ellipse cx="172" cy="78" rx="30" ry="17" fill="#d6517d" stroke="#9e3157" stroke-width="2" transform="rotate(-18 172 78)"/><ellipse cx="228" cy="78" rx="30" ry="17" fill="#d6517d" stroke="#9e3157" stroke-width="2" transform="rotate(18 228 78)"/><path d="M190 88 L176 120 L192 112 Z M210 88 L224 120 L208 112 Z" fill="#d6517d"/><circle cx="200" cy="82" r="11" fill="#f4c84a" stroke="#a87b00" stroke-width="2"/></g><g class="dec d3"><polyline points="30,200 55,178 80,200 105,178 130,200 155,178 180,200 205,178 230,200 255,178 280,200 305,178 330,200 355,178 380,200" fill="none" stroke="#fdf3e1" stroke-width="7" stroke-linejoin="round"/></g><g class="dec d4"><circle cx="95" cy="395" r="7" fill="#fdf3e1"/><circle cx="130" cy="420" r="6" fill="#fdf3e1"/><circle cx="165" cy="445" r="7" fill="#fdf3e1"/><circle cx="110" cy="440" r="5" fill="#fdf3e1"/><circle cx="150" cy="390" r="5" fill="#fdf3e1"/><circle cx="200" cy="410" r="6" fill="#fdf3e1"/><circle cx="235" cy="445" r="5" fill="#fdf3e1"/></g><g class="dec d5"><circle cx="131.0" cy="292.0" r="9" fill="#f4a7b9"/><circle cx="123.4" cy="302.5" r="9" fill="#f4a7b9"/><circle cx="111.1" cy="298.5" r="9" fill="#f4a7b9"/><circle cx="111.1" cy="285.5" r="9" fill="#f4a7b9"/><circle cx="123.4" cy="281.5" r="9" fill="#f4a7b9"/><circle cx="120" cy="292" r="7" fill="#f4c84a"/><circle cx="293.0" cy="292.0" r="9" fill="#c9b6e8"/><circle cx="285.4" cy="302.5" r="9" fill="#c9b6e8"/><circle cx="273.1" cy="298.5" r="9" fill="#c9b6e8"/><circle cx="273.1" cy="285.5" r="9" fill="#c9b6e8"/><circle cx="285.4" cy="281.5" r="9" fill="#c9b6e8"/><circle cx="282" cy="292" r="7" fill="#f4c84a"/><circle cx="211.0" cy="230.0" r="9" fill="#a8d8b9"/><circle cx="203.4" cy="240.5" r="9" fill="#a8d8b9"/><circle cx="191.1" cy="236.5" r="9" fill="#a8d8b9"/><circle cx="191.1" cy="223.5" r="9" fill="#a8d8b9"/><circle cx="203.4" cy="219.5" r="9" fill="#a8d8b9"/><circle cx="200" cy="230" r="7" fill="#f4c84a"/></g><g class="dec d6"><polygon points="130.0,134.0 133.7,142.9 143.3,143.7 136.0,149.9 138.2,159.3 130.0,154.3 121.8,159.3 124.0,149.9 116.7,143.7 126.3,142.9" fill="#f4c84a" stroke="#a87b00" stroke-width="1"/><polygon points="272.0,128.0 275.2,135.6 283.4,136.3 277.1,141.7 279.1,149.7 272.0,145.4 264.9,149.7 266.9,141.7 260.6,136.3 268.8,135.6" fill="#f4c84a" stroke="#a87b00" stroke-width="1"/><polygon points="205.0,151.0 207.4,156.7 213.6,157.2 208.9,161.3 210.3,167.3 205.0,164.1 199.7,167.3 201.1,161.3 196.4,157.2 202.6,156.7" fill="#ffe28a" stroke="#a87b00" stroke-width="1"/><polygon points="95.0,221.0 97.4,226.7 103.6,227.2 98.9,231.3 100.3,237.3 95.0,234.1 89.7,237.3 91.1,231.3 86.4,227.2 92.6,226.7" fill="#ffe28a" stroke="#a87b00" stroke-width="1"/><polygon points="310.0,218.0 312.6,224.4 319.5,224.9 314.3,229.4 315.9,236.1 310.0,232.5 304.1,236.1 305.7,229.4 300.5,224.9 307.4,224.4" fill="#f4c84a" stroke="#a87b00" stroke-width="1"/></g><g class="dec d7"><g fill="#fffaf3" stroke="#5a3420" stroke-width="2"><ellipse cx="292" cy="372" rx="8" ry="22"/><ellipse cx="310" cy="372" rx="8" ry="22"/><circle cx="301" cy="408" r="22"/></g><circle cx="294" cy="404" r="3" fill="#5a3420"/><circle cx="308" cy="404" r="3" fill="#5a3420"/><ellipse cx="301" cy="414" rx="4" ry="3" fill="#d6517d"/></g><g class="dec d8"><ellipse cx="100" cy="300" rx="14" ry="6" fill="#5c9d6a" transform="rotate(-30 100 300)"/><ellipse cx="142" cy="306" rx="14" ry="6" fill="#5c9d6a" transform="rotate(30 142 306)"/><ellipse cx="262" cy="306" rx="14" ry="6" fill="#5c9d6a" transform="rotate(-30 262 306)"/><ellipse cx="304" cy="300" rx="14" ry="6" fill="#5c9d6a" transform="rotate(30 304 300)"/><ellipse cx="182" cy="244" rx="12" ry="5" fill="#5c9d6a" transform="rotate(-25 182 244)"/><ellipse cx="218" cy="244" rx="12" ry="5" fill="#5c9d6a" transform="rotate(25 218 244)"/></g><g class="dec d9"><g class="tw" style="animation-delay:0.00s"><path d="M80 180 Q80 190 90 190 Q80 190 80 200 Q80 190 70 190 Q80 190 80 180 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:0.35s"><path d="M330 311 Q330 320 339 320 Q330 320 330 329 Q330 320 321 320 Q330 320 330 311 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:0.70s"><path d="M240 102 Q240 110 248 110 Q240 110 240 118 Q240 110 232 110 Q240 110 240 102 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:1.05s"><path d="M160 341 Q160 350 169 350 Q160 350 160 359 Q160 350 151 350 Q160 350 160 341 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:1.40s"><path d="M250 412 Q250 420 258 420 Q250 420 250 428 Q250 420 242 420 Q250 420 250 412 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:1.75s"><path d="M60 313 Q60 320 67 320 Q60 320 60 327 Q60 320 53 320 Q60 320 60 313 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:2.10s"><path d="M340 182 Q340 190 348 190 Q340 190 340 198 Q340 190 332 190 Q340 190 340 182 Z" fill="#fff6c8"/></g></g></g></g>
+<g class="top"><g clip-path="url(#topC)"><path d="M200 30 C305 30 360 210 360 305 C360 405 290 470 200 470 C110 470 40 405 40 305 C40 210 95 30 200 30 Z" fill="url(#choc)" stroke="#3a1f10" stroke-width="4"/><path d="M120 120 Q150 70 200 62" fill="none" stroke="#c58a5a" stroke-width="10" stroke-linecap="round" opacity=".55"/><g clip-path="url(#eggC)"><g class="dec d1"><rect x="0" y="328" width="400" height="30" fill="#d6517d"/><rect x="0" y="326" width="400" height="4" fill="#f4c84a"/><rect x="0" y="356" width="400" height="4" fill="#f4c84a"/></g><g class="dec d2"><ellipse cx="172" cy="78" rx="30" ry="17" fill="#d6517d" stroke="#9e3157" stroke-width="2" transform="rotate(-18 172 78)"/><ellipse cx="228" cy="78" rx="30" ry="17" fill="#d6517d" stroke="#9e3157" stroke-width="2" transform="rotate(18 228 78)"/><path d="M190 88 L176 120 L192 112 Z M210 88 L224 120 L208 112 Z" fill="#d6517d"/><circle cx="200" cy="82" r="11" fill="#f4c84a" stroke="#a87b00" stroke-width="2"/></g><g class="dec d3"><polyline points="30,200 55,178 80,200 105,178 130,200 155,178 180,200 205,178 230,200 255,178 280,200 305,178 330,200 355,178 380,200" fill="none" stroke="#fdf3e1" stroke-width="7" stroke-linejoin="round"/></g><g class="dec d4"><circle cx="95" cy="395" r="7" fill="#fdf3e1"/><circle cx="130" cy="420" r="6" fill="#fdf3e1"/><circle cx="165" cy="445" r="7" fill="#fdf3e1"/><circle cx="110" cy="440" r="5" fill="#fdf3e1"/><circle cx="150" cy="390" r="5" fill="#fdf3e1"/><circle cx="200" cy="410" r="6" fill="#fdf3e1"/><circle cx="235" cy="445" r="5" fill="#fdf3e1"/></g><g class="dec d5"><circle cx="131.0" cy="292.0" r="9" fill="#f4a7b9"/><circle cx="123.4" cy="302.5" r="9" fill="#f4a7b9"/><circle cx="111.1" cy="298.5" r="9" fill="#f4a7b9"/><circle cx="111.1" cy="285.5" r="9" fill="#f4a7b9"/><circle cx="123.4" cy="281.5" r="9" fill="#f4a7b9"/><circle cx="120" cy="292" r="7" fill="#f4c84a"/><circle cx="293.0" cy="292.0" r="9" fill="#c9b6e8"/><circle cx="285.4" cy="302.5" r="9" fill="#c9b6e8"/><circle cx="273.1" cy="298.5" r="9" fill="#c9b6e8"/><circle cx="273.1" cy="285.5" r="9" fill="#c9b6e8"/><circle cx="285.4" cy="281.5" r="9" fill="#c9b6e8"/><circle cx="282" cy="292" r="7" fill="#f4c84a"/><circle cx="211.0" cy="230.0" r="9" fill="#a8d8b9"/><circle cx="203.4" cy="240.5" r="9" fill="#a8d8b9"/><circle cx="191.1" cy="236.5" r="9" fill="#a8d8b9"/><circle cx="191.1" cy="223.5" r="9" fill="#a8d8b9"/><circle cx="203.4" cy="219.5" r="9" fill="#a8d8b9"/><circle cx="200" cy="230" r="7" fill="#f4c84a"/></g><g class="dec d6"><polygon points="130.0,134.0 133.7,142.9 143.3,143.7 136.0,149.9 138.2,159.3 130.0,154.3 121.8,159.3 124.0,149.9 116.7,143.7 126.3,142.9" fill="#f4c84a" stroke="#a87b00" stroke-width="1"/><polygon points="272.0,128.0 275.2,135.6 283.4,136.3 277.1,141.7 279.1,149.7 272.0,145.4 264.9,149.7 266.9,141.7 260.6,136.3 268.8,135.6" fill="#f4c84a" stroke="#a87b00" stroke-width="1"/><polygon points="205.0,151.0 207.4,156.7 213.6,157.2 208.9,161.3 210.3,167.3 205.0,164.1 199.7,167.3 201.1,161.3 196.4,157.2 202.6,156.7" fill="#ffe28a" stroke="#a87b00" stroke-width="1"/><polygon points="95.0,221.0 97.4,226.7 103.6,227.2 98.9,231.3 100.3,237.3 95.0,234.1 89.7,237.3 91.1,231.3 86.4,227.2 92.6,226.7" fill="#ffe28a" stroke="#a87b00" stroke-width="1"/><polygon points="310.0,218.0 312.6,224.4 319.5,224.9 314.3,229.4 315.9,236.1 310.0,232.5 304.1,236.1 305.7,229.4 300.5,224.9 307.4,224.4" fill="#f4c84a" stroke="#a87b00" stroke-width="1"/></g><g class="dec d7"><g fill="#fffaf3" stroke="#5a3420" stroke-width="2"><ellipse cx="292" cy="372" rx="8" ry="22"/><ellipse cx="310" cy="372" rx="8" ry="22"/><circle cx="301" cy="408" r="22"/></g><circle cx="294" cy="404" r="3" fill="#5a3420"/><circle cx="308" cy="404" r="3" fill="#5a3420"/><ellipse cx="301" cy="414" rx="4" ry="3" fill="#d6517d"/></g><g class="dec d8"><ellipse cx="100" cy="300" rx="14" ry="6" fill="#5c9d6a" transform="rotate(-30 100 300)"/><ellipse cx="142" cy="306" rx="14" ry="6" fill="#5c9d6a" transform="rotate(30 142 306)"/><ellipse cx="262" cy="306" rx="14" ry="6" fill="#5c9d6a" transform="rotate(-30 262 306)"/><ellipse cx="304" cy="300" rx="14" ry="6" fill="#5c9d6a" transform="rotate(30 304 300)"/><ellipse cx="182" cy="244" rx="12" ry="5" fill="#5c9d6a" transform="rotate(-25 182 244)"/><ellipse cx="218" cy="244" rx="12" ry="5" fill="#5c9d6a" transform="rotate(25 218 244)"/></g><g class="dec d9"><g class="tw" style="animation-delay:0.00s"><path d="M80 180 Q80 190 90 190 Q80 190 80 200 Q80 190 70 190 Q80 190 80 180 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:0.35s"><path d="M330 311 Q330 320 339 320 Q330 320 330 329 Q330 320 321 320 Q330 320 330 311 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:0.70s"><path d="M240 102 Q240 110 248 110 Q240 110 240 118 Q240 110 232 110 Q240 110 240 102 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:1.05s"><path d="M160 341 Q160 350 169 350 Q160 350 160 359 Q160 350 151 350 Q160 350 160 341 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:1.40s"><path d="M250 412 Q250 420 258 420 Q250 420 250 428 Q250 420 242 420 Q250 420 250 412 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:1.75s"><path d="M60 313 Q60 320 67 320 Q60 320 60 327 Q60 320 53 320 Q60 320 60 313 Z" fill="#fff6c8"/></g><g class="tw" style="animation-delay:2.10s"><path d="M340 182 Q340 190 348 190 Q340 190 340 198 Q340 190 332 190 Q340 190 340 182 Z" fill="#fff6c8"/></g></g></g></g><polyline points="0,260 20,272 50,246 80,272 110,246 140,272 170,246 200,272 230,246 260,272 290,246 320,272 350,246 380,272 400,260" fill="none" stroke="#3a1f10" stroke-width="3" class="crack" clip-path="url(#eggC)"/></g>
+</svg></div><span class="eggcap" id="eggcap">0 décoration sur 9</span>
+      <p class="relight" id="relight"></p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="boutique">
+  <div class="wrap">
+    <p class="kicker">La boutique en vrai</p>
+    <h2>Qui est Schmitt Chocolatier ?</h2>
+    <div class="grid2">
+      <div class="panel real">
+        <h3>✅ Ce qui est vrai</h3>
+        <ul class="facts">
+          <li>📍 La boutique de Nancy se trouve au <b>18 rue Gambetta</b>, à deux pas de la <b>place Stanislas</b>.</li>
+          <li>👨‍👦‍👦 C'est une <b>entreprise familiale</b> fondée en <b>1983</b> à Gérardmer par <b>Jean-Émile Schmitt</b>, aujourd'hui menée avec ses trois fils.</li>
+          <li>🏪 La maison a <b>trois boutiques</b> : Gérardmer, Remiremont et Nancy.</li>
+          <li>🍫 Parmi ses spécialités : le <b>Granit</b> (gianduja aux éclats de noisettes grillées, enrobé de cacao en poudre) et l'<b>Oignon de jonquille</b> (praliné amande enrobé de chocolat blanc et roulé dans le cacao), ainsi que des tablettes et des pâtes à tartiner.</li>
+          <li>🏅 La chocolaterie est distinguée par le guide des <b>Croqueurs de chocolat</b>.</li>
+          <li>🐣 En 2027, le dimanche de Pâques tombe le <b>28 mars</b> ; le lundi de Pâques (29 mars) est un jour férié en France.</li>
+        </ul>
+        <p class="src">Sources (consultées le 4 octobre 2026) : Destination Nancy, office de tourisme, fiche « Schmitt Chocolatier » (destination-nancy.com) ; Gault&amp;Millau, fiche « Schmitt Chocolatier, 18 rue Gambetta, Nancy » (gaultmillau.com) ; La Gazette, articles « Remiremont : les frères Schmitt reprennent la boutique de Neuville » et « Schmitt Chocolatier souffle sa 40e bougie » (lagazettefrance.fr). Avant toute visite, vérifie les horaires auprès de la boutique.</p>
+      </div>
+      <div class="panel fiction">
+        <h3>🎭 Ce qui est inventé pour le scénario</h3>
+        <ul class="facts">
+          <li>🧑‍🎓 La situation : tu viens <b>en renfort pour Pâques</b>. La boutique n'a pas participé à la création de ce scénario.</li>
+          <li>👩‍💼 <b>Mme Noisette</b>, ta tutrice, et <b>Théo</b>, le vendeur, sont des personnages fictifs.</li>
+          <li>🐇 <b>Le Lapin Farceur</b> et ses farces, bien sûr.</li>
+          <li>🏷️ Les produits des missions, leurs <b>prix</b>, leurs <b>compositions</b>, les horaires et les animations sont <b>inventés pour l'exercice</b> : ce ne sont pas ceux de la boutique.</li>
+          <li>🛍️ Les règles du click &amp; collect sont fixées pour l'exercice.</li>
+        </ul>
+        <p class="src">Le Grand Œuf est une illustration dessinée pour ce scénario.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <p class="kicker">Mise en situation</p>
+    <h2>Le Lapin Farceur a volé les décorations</h2>
+    <p>Tu es équipier(ère) polyvalent(e) en renfort chez Schmitt Chocolatier pour l'<b>Opération Pâques</b>, du <b>samedi 13 au dimanche 28 mars 2027</b>. Pour la boutique, c'est un grand temps fort : il faut donner envie, bien conseiller et animer.</p>
+    <p>Mais le <b>Lapin Farceur</b> est passé : podium en désordre, étiquettes fausses, conseils hasardeux, affiche pleine d'erreurs… et il a volé toutes les décorations du <b>Grand Œuf</b>, l'œuf géant en chocolat qui trône dans la boutique.</p>
+    <p><b>Chaque mission réussie</b> te donne un chiffre du code <b>et rend une décoration au Grand Œuf</b>. Avec les 9 chiffres, ouvre-le tout en bas de la page : une surprise t'attend.</p>
+    <div class="letter">
+      <div class="who">🎯 La problématique du scénario</div>
+      « Comment dynamiser les ventes de Pâques et offrir une expérience client gourmande et attractive ? »
+    </div>
+    <div class="rules">
+      <div class="rule"><b class="e">1️⃣</b><b>Pôle 1 · BC2</b> – Mettre en valeur l'offre de Pâques en magasin.</div>
+      <div class="rule"><b class="e">2️⃣</b><b>Pôle 2 · BC3</b> – Conseiller le client et valoriser les produits.</div>
+      <div class="rule"><b class="e">3️⃣</b><b>Pôle 3 · BC2</b> – Participer à l'animation commerciale et à l'ambiance du point de vente.</div>
+      <div class="rule"><b class="e">📁</b>Je rends mon travail en <b>PDF</b> dans l'espace de dépôt de la classe.</div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<section class="block" id="grimoire">
+  <div class="wrap">
+    <p class="kicker">Avant de commencer</p>
+    <h2>Le Ballotin des mots du pro</h2>
+    <p>Un <b>ballotin</b>, c'est la boîte en carton dans laquelle le chocolatier range les chocolats. Ici, chaque carte est un mot du métier à croquer !</p>
+    <p>Clique sur une carte pour la retourner. Coche « je sais l'expliquer » seulement quand tu peux expliquer le mot avec tes mots, sans lire.</p>
+    <p class="jarlabel" id="knowcount">0 mot maîtrisé</p>
+    <div class="cards" id="cards"></div>
+
+  </div>
+</section>
+
+<section class="block" id="parcours">
+  <div class="wrap">
+    <p class="kicker">Mon parcours</p>
+    <h2>9 missions, dans l'ordre</h2>
+    <p>Tu commences par le <b>Pôle 1, mission 1</b>. Il y a <b>3 missions par pôle</b>, une pour chaque compétence du scénario. Quand tu as trouvé le chiffre d'une mission <b>et rempli ton auto-évaluation</b>, la suivante se débloque. Les missions terminées restent ouvertes : tu peux y revenir pour relire.</p>
+    <div class="path" id="path"></div>
+    <p style="margin:16px 0 0"><a class="btn" id="continueBtn" href="#m1">▶ Continuer ma mission</a></p>
+  </div>
+</section>
+
+<section class="block" id="pole1"><div class="wrap"><div class="pole-head"><span class="pn">1</span><div><p class="kicker" style="margin:0">Pôle 1 · BC2</p><h2 style="margin:0">Mettre en valeur l'offre de Pâques en magasin</h2></div></div><div id="p1"></div></div></section>
+<section class="block" id="pole2"><div class="wrap"><div class="pole-head"><span class="pn">2</span><div><p class="kicker" style="margin:0">Pôle 2 · BC3</p><h2 style="margin:0">Conseiller le client et valoriser les produits</h2></div></div><div id="p2"></div></div></section>
+<section class="block" id="pole3"><div class="wrap"><div class="pole-head"><span class="pn">3</span><div><p class="kicker" style="margin:0">Pôle 3 · BC2</p><h2 style="margin:0">Participer à l'animation commerciale et à l'ambiance</h2></div></div><div id="p3"></div></div></section>
+
+<section class="block" id="bocal">
+  <div class="wrap">
+    <div class="vault" id="vault">
+      <p class="kicker">La finale</p>
+      <h2>Ouvrir le Grand Œuf</h2>
+      <p>Tape le code complet (9 chiffres), dans l'ordre des missions, pour ouvrir le Grand Œuf et découvrir sa surprise.</p>
+      <div class="lock" id="lockIcon">🔒</div>
+      <div class="codein" id="codein"></div>
+      <button class="btn" id="vaultBtn">Ouvrir le Grand Œuf</button>
+      <p class="status fb" id="vaultMsg" aria-live="polite">Le Grand Œuf reste scellé tant que le code est faux.</p>
+      
+    </div>
+  </div>
+</section>
+<section class="block" id="prof">
+  <div class="wrap">
+    <p class="kicker">Réservé à l'enseignante</p>
+    <h2>Espace enseignant</h2>
+    <p>Sur l'ordinateur de l'élève, saisis le code enseignant : la page <b>corrige automatiquement</b> son travail (questions fermées) et affiche le corrigé complet des 9 missions. Tout se referme dès que la page est rechargée.</p>
+    <div class="row"><input id="profcode" type="password" autocomplete="off" placeholder="Code enseignant" aria-label="Code enseignant" style="max-width:240px"><button class="btn" id="profbtn" type="button">Afficher le corrigé</button><button class="btn ghost" id="profhide" type="button" hidden>Masquer le corrigé</button><span class="fb" id="profmsg" role="status"></span></div>
+    <div class="row" id="profactions" hidden style="margin-top:12px"><button class="btn ghost" id="unlockBtn" type="button"></button><button class="btn ghost" id="resetBtn" type="button">🧹 Effacer tout le travail enregistré sur cet ordinateur</button><span class="fb" id="profmsg2" role="status"></span></div>
+    <div class="panel corrige" id="autocor" hidden></div>
+    <div class="panel corrige" id="corrige" hidden></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  Schmitt Chocolatier (Nancy) – Le Grand Œuf de Pâques · Situation professionnelle imaginée autour d'une boutique réelle · Lycée Marie Marvingt, Tomblaine · 1re CAP EPC · Mme LEGER Isabelle · 2026–2027 · <a href="#prof">🔑 Espace enseignant</a>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* ---------- Stockage ---------- */
+var KEY="schmitt-chocolatier-paques-v3";
+var state={a:{},lv:{},digits:{},know:{},globalLv:1,final:false};
+try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);if(p&&typeof p==="object"){state=Object.assign(state,p);}}}catch(e){}
+state.globalLv=1; state.lv={}; /* un seul niveau pour tous : Apprenti confiseur */
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+/* ---------- Thème ---------- */
+var themeBtn=document.getElementById("themeBtn");
+function isDark(){var t=document.documentElement.getAttribute("data-theme");if(t)return t==="dark";return window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches;}
+function paintTheme(){themeBtn.textContent=isDark()?"☀️":"🌙";}
+themeBtn.addEventListener("click",function(){document.documentElement.setAttribute("data-theme",isDark()?"light":"dark");paintTheme();});
+paintTheme();
+
+/* ---------- Codes (légèrement masqués) ---------- */
+var ENC=[9,9,4,6,8,1,5,9,0]; // (chiffre + 3*(i+1)) % 10
+function good(i){return ((ENC[i]-3*(i+1))%10+10)%10;}
+
+/* ---------- Missions ---------- */
+function sel(k,label,opts){var h='<select data-k="'+k+'" data-label="'+label+'"><option value="">…</option>';opts.forEach(function(o){h+='<option>'+o+'</option>';});return h+'</select>';}
+function inp(k,label,ph){return '<input data-k="'+k+'" data-label="'+label+'" placeholder="'+(ph||"")+'" inputmode="decimal">';}
+function ta(k,label,ph){return '<textarea data-k="'+k+'" data-label="'+label+'" placeholder="'+(ph||"")+'"></textarea>';}
+var ANOM=["Conforme","Quantité manquante","Quantité en trop","Mauvais produit","Produit abîmé"];
+
+var M=[
+{pole:1,emoji:"🎁",title:"Le podium de l'entrée",
+story:"Samedi 13 mars 2027, premier jour de l'opération Pâques. Le podium installé à l'entrée doit donner envie dès le premier regard… mais le Lapin Farceur est passé par là. Compare le podium avec la charte de présentation.",
+docs:
+'<div class="doc"><div class="dt">Document 1 – Charte de présentation du podium (fixée pour l\'exercice)</div><ol style="margin:0;padding-left:20px">'+
+'<li>Chaque produit présenté a un <b>prix visible</b>.</li>'+
+'<li>Les produits sont <b>regroupés par famille</b> : œufs, animaux (lapins, poules), fritures.</li>'+
+'<li>La <b>nouveauté</b> est au centre, en hauteur.</li>'+
+'<li>Le chocolat n\'est <b>jamais au soleil</b> ni près d\'une source de chaleur.</li>'+
+'<li>Les emballages sont <b>propres et intacts</b>.</li>'+
+'<li>Le décor est <b>en lien avec Pâques</b> et le printemps.</li>'+
+'<li>Une <b>PLV</b> annonce l\'animation dégustation du samedi 20 mars.</li></ol></div>'+
+'<div class="doc"><div class="dt">Document 2 – Ce que tu observes sur le podium</div><p style="margin:0">Lis chaque observation dans l\'exercice ci-dessous.</p></div>',
+task:'<div class="task"><div class="tt">✍️ Coche chaque observation qui ne respecte pas la charte</div><ol class="dlg" id="dlg1">'+
+[
+"Le Grand œuf décoré (nouveauté) est posé au centre, en haut du podium.",
+"Les lapins sont mélangés avec les sachets de friture et les œufs.",
+"Trois poules en chocolat n'ont pas d'étiquette prix.",
+"Le podium est collé contre la vitrine, en plein soleil l'après-midi.",
+"Un sachet de friture a un film déchiré.",
+"Des paniers en osier et des fleurs en tissu décorent le podium.",
+"Une affichette « Joyeux Noël » est restée accrochée au podium.",
+"Aucune affiche n'annonce la dégustation du samedi 20 mars."
+].map(function(t,i){return '<li><span class="n">'+(i+1)+'</span><span>'+t+'</span><label><input type="checkbox" data-k="m1_c'+(i+1)+'" data-label="Observation '+(i+1)+' non conforme"> Non conforme</label></li>';}).join("")+
+'</ol></div><div class="task"><div class="tt">✍️ Pour 3 observations non conformes, écris ce que tu fais pour corriger</div>'+ta("m1_fix","Corrections du podium","Observation … : je …")+'</div>',
+method:"Prends les observations une par une et compare-les avec chaque règle de la charte. Une observation est non conforme si elle ne respecte pas au moins une règle.",
+hints:["Relis la règle 2 : comment les produits doivent-ils être rangés ?","Le chocolat craint la chaleur : où est installé le podium ?","Le décor doit parler de Pâques… et la dégustation doit être annoncée."],
+q:"Combien d'observations ne respectent pas la charte ?"},
+
+{pole:1,emoji:"🏷️",title:"Les étiquettes de Pâques",
+story:"Les chocolats sont en rayon, mais le Lapin Farceur a trafiqué l'imprimante à étiquettes. Compare chaque étiquette du rayon avec la fiche prix validée par Mme Noisette.",
+docs:
+'<div class="doc"><div class="dt">Document 1 – Fiche prix validée par Mme Noisette</div><div class="tw-scroll"><table><tr><th>Produit</th><th>Poids</th><th class="num">Prix de vente TTC</th></tr>'+
+'<tr><td>A · Friture de Pâques</td><td>Sachet de 250 g</td><td class="num">5,00 €</td></tr>'+
+'<tr><td>B · Œuf au lait</td><td>250 g</td><td class="num">9,50 €</td></tr>'+
+'<tr><td>C · Lapin au lait</td><td>100 g</td><td class="num">3,90 €</td></tr>'+
+'<tr><td>D · Poule pralinée</td><td>200 g</td><td class="num">7,20 €</td></tr>'+
+'<tr><td>E · Ballotin assortiment</td><td>500 g</td><td class="num">21,00 €</td></tr>'+
+'<tr><td>F · Cloche chocolat noir</td><td>200 g</td><td class="num">6,40 €</td></tr></table></div></div>'+
+'<div class="doc"><div class="dt">Document 2 – Les étiquettes affichées en rayon</div><div class="labels">'+
+'<div class="ptag"><div class="pl">A · Friture de Pâques</div><div class="pp">5,00 €</div><div class="pk">sachet 250 g · 20,00 €/kg</div></div>'+
+'<div class="ptag"><div class="pl">B · Œuf au lait</div><div class="pp">9,50 €</div><div class="pk">250 g · 9,50 €/kg</div></div>'+
+'<div class="ptag"><div class="pl">C · Lapin au lait</div><div class="pp">3,90 €</div><div class="pk">100 g · 39,00 €/kg</div></div>'+
+'<div class="ptag"><div class="pl">D · Poule pralinée</div><div class="pp">7,20 €</div><div class="pk">200 g · 34,00 €/kg</div></div>'+
+'<div class="ptag"><div class="pl">E · Ballotin assortiment</div><div class="pp">21,00 €</div><div class="pk">500 g · 42,00 €/kg</div></div>'+
+'<div class="ptag"><div class="pl">F · Cloche chocolat noir</div><div class="pp">6,90 €</div><div class="pk">200 g · 34,50 €/kg</div></div>'+
+'</div></div>'+
+'<div class="doc"><div class="dt">Document 3 – Aide au calcul du prix au kilo</div><div class="tw-scroll"><table><tr><th>Le produit pèse…</th><th>Pour avoir le prix d\'1 kg, je multiplie le prix par…</th><th>Exemple</th></tr>'+
+'<tr><td>100 g</td><td><b>× 10</b> (10 × 100 g = 1 kg)</td><td>2,00 € × 10 = 20,00 €/kg</td></tr>'+
+'<tr><td>200 g</td><td><b>× 5</b> (5 × 200 g = 1 kg)</td><td>2,00 € × 5 = 10,00 €/kg</td></tr>'+
+'<tr><td>250 g</td><td><b>× 4</b> (4 × 250 g = 1 kg)</td><td>3,00 € × 4 = 12,00 €/kg</td></tr>'+
+'<tr><td>500 g</td><td><b>× 2</b> (2 × 500 g = 1 kg)</td><td>8,00 € × 2 = 16,00 €/kg</td></tr></table></div></div>',
+task:'<div class="task"><div class="tt">✍️ À toi : contrôle chaque étiquette</div><div class="tw-scroll"><table><tr><th>Produit</th><th>Poids</th><th>Mon prix au kilo (avec le prix de la fiche)</th><th>L\'étiquette est…</th></tr>'+
+[["A","250 g · × 4"],["B","250 g · × 4"],["C","100 g · × 10"],["D","200 g · × 5"],["E","500 g · × 2"],["F","200 g · × 5"]].map(function(r){var x=r[0];return '<tr><td>'+x+'</td><td>'+r[1]+'</td><td>'+inp("m2_k"+x,"Prix au kg "+x,"€/kg")+'</td><td>'+sel("m2_v"+x,"Étiquette "+x,["Juste","Fausse"])+'</td></tr>';}).join("")+
+'</table></div></div>',
+method:"Calcule le prix au kilo avec le prix de la fiche prix et l'aide au calcul : 100 g → × 10 ; 200 g → × 5 ; 250 g → × 4 ; 500 g → × 2. Compare ensuite avec l'étiquette : le prix de vente ET le prix au kilo doivent être justes.",
+hints:["Œuf au lait : 9,50 € × 4 = ? Est-ce bien ce qui est écrit sur l'étiquette ?","Poule pralinée : 7,20 € × 5 = ? Est-ce bien 34,00 ?","Une étiquette peut être fausse à cause du prix de vente lui-même : compare le prix de la cloche avec la fiche prix."],
+q:"Combien d'étiquettes sont fausses ?"},
+
+{pole:1,emoji:"🥚",title:"La tête de gondole des œufs",
+story:"Le Lapin Farceur a tout mélangé sur la tête de gondole de Pâques, juste en face de l'entrée. Mme Noisette te confie sa remise en place et son réassort.",
+docs:
+'<div class="doc"><div class="dt">Document 1 – La tête de gondole</div><div class="gondola">'+
+'<div class="lvl">Niveau chapeau</div><div>Tout en haut, vu de loin, peu accessible</div>'+
+'<div class="lvl">Niveau des yeux</div><div>Tablette de <b>120 cm</b> de long. Le client voit les produits sans chercher.</div>'+
+'<div class="lvl">Niveau des mains</div><div>Facile à attraper, à hauteur de bras</div>'+
+'<div class="lvl">Niveau du sol</div><div>En bas, il faut se baisser</div></div></div>'+
+'<div class="doc"><div class="dt">Document 2 – Consignes de Mme Noisette</div><ul style="margin:0;padding-left:20px">'+
+'<li>Au niveau des yeux : la nouveauté <b>Grand œuf décoré</b> (largeur d\'une boîte : <b>22 cm</b>).</li>'+
+'<li>Sur la même tablette, garder <b>10 cm</b> pour la PLV « La chasse aux œufs ».</li>'+
+'<li>Les boîtes sont posées côte à côte, sans espace, sans dépasser de la tablette.</li>'+
+'<li>Chaque facing contient <b>4 boîtes</b> en profondeur. Ce matin, il reste <b>7 boîtes</b> sur la tablette.</li></ul></div>',
+task:'<div class="task"><div class="tt">✍️ 1) Place chaque produit au bon niveau</div><div class="tw-scroll"><table><tr><th>Produit</th><th>Niveau</th></tr>'+
+'<tr><td>Grand œuf décoré (nouveauté)</td><td>'+sel("m3_oeuf","Niveau Grand œuf",["Chapeau","Yeux","Mains","Sol"])+'</td></tr>'+
+'<tr><td>Seaux de friture de 1 kg (lourds)</td><td>'+sel("m3_seau","Niveau seaux",["Chapeau","Yeux","Mains","Sol"])+'</td></tr>'+
+'<tr><td>Petits lapins 100 g (achat d\'impulsion)</td><td>'+sel("m3_lap","Niveau petits lapins",["Chapeau","Yeux","Mains","Sol"])+'</td></tr>'+
+'<tr><td>Paniers en osier décoratifs (décor)</td><td>'+sel("m3_deco","Niveau décor",["Chapeau","Yeux","Mains","Sol"])+'</td></tr></table></div></div>'+
+'<div class="task"><div class="tt">✍️ 2) Calcule le nombre de facings du Grand œuf</div>'+ta("m3_calc","Calcul facings","Écris ton calcul")+'</div>'+
+'<div class="task"><div class="tt">✍️ 3) Combien de boîtes sors-tu de la réserve pour que la tablette soit pleine ?</div>'+ta("m3_reassort","Calcul réassort","Écris ton calcul et ton résultat")+'</div>',
+method:"Place disponible = longueur de la tablette − place de la PLV. Nombre de facings = place disponible ÷ largeur d'une boîte. Tablette pleine = nombre de facings × boîtes en profondeur. Réassort = tablette pleine − boîtes déjà en rayon.",
+hints:["La PLV prend de la place sur la tablette : 120 − 10 = ?","110 ÷ 22 = ?","Tablette pleine : facings × 4 ; puis enlève les 7 boîtes qui restent."],
+q:"Combien de facings de Grand œuf peux-tu installer ?"},
+
+{pole:2,emoji:"🗣️",title:"L'accueil gourmand",
+story:"Théo, un vendeur (personnage fictif), a croqué un œuf du Lapin Farceur : son accueil est complètement farfelu. Lis la scène avec Mme Morel, une cliente, et repère chaque réplique ou attitude qui n'est pas professionnelle.",
+docs:"",
+task:'<div class="task"><div class="tt">✍️ Coche chaque farce (attitude ou parole non professionnelle)</div><ol class="dlg" id="dlg4">'+
+[
+"Mme Morel entre. Théo termine sa conversation au téléphone sans la regarder.",
+"Théo, en souriant : « Bonjour madame, bienvenue chez Schmitt Chocolatier ! »",
+"Mme Morel : « Je cherche un cadeau de Pâques. » Théo : « Avec plaisir ! C'est pour offrir ou pour vous ? »",
+"Mme Morel demande où sont les œufs. Théo : « Là-bas au fond, débrouillez-vous. »",
+"Théo : « C'est pour un enfant ? Quel âge a-t-il ? »",
+"Mme Morel : « Il y a des noisettes dans cet œuf ? Ma petite-fille est allergique. » Théo : « Euh… non, je crois pas. »",
+"Mme Morel : « Et cette poule pralinée ? » Théo : « Je vérifie la liste des ingrédients sur l'étiquette pour vous répondre avec certitude. »",
+"Théo : « Pour la chasse aux œufs, je vous conseille aussi notre petit panier en osier. »",
+"À la caisse, Théo : « Ça fait 25 balles. »",
+"Mme Morel part. Théo : « Merci madame, joyeuses Pâques et à bientôt ! »"
+].map(function(t,i){return '<li><span class="n">'+(i+1)+'</span><span>'+t+'</span><label><input type="checkbox" data-k="m4_c'+(i+1)+'" data-label="Réplique '+(i+1)+' = farce"> Farce</label></li>';}).join("")+
+'</ol></div><div class="task"><div class="tt">✍️ Réécris en langage professionnel la réplique 4 et la réplique 6</div>'+ta("m4_r4","Réplique 4 corrigée","Réplique 4 : …")+'<div style="height:8px"></div>'+ta("m4_r6","Réplique 6 corrigée","Réplique 6 : …")+'</div>',
+method:"Pour chaque ligne, pose-toi trois questions : la cliente se sent-elle accueillie ? Est-elle aidée (ou renvoyée) ? Le vocabulaire et l'information donnée sont-ils fiables et professionnels ?",
+hints:["Un accueil commence avant le premier mot : regard, sourire, attitude.","Quand on ne sait pas, on vérifie (étiquette, liste des ingrédients) au lieu de deviner, surtout pour une allergie.","La prise de congé fait aussi partie de l'accueil."],
+q:"Combien de farces as-tu trouvées ?"},
+
+{pole:2,emoji:"💬",title:"Le bon conseil",
+story:"Quatre clients te demandent conseil. Pour chacun, tu dois trouver dans la sélection de Pâques <b>le seul produit</b> qui respecte toutes ses contraintes : goût, âge, allergie, budget, nombre de personnes.",
+docs:
+'<div class="doc"><div class="dt">Document 1 – La sélection de Pâques (produits, compositions et prix inventés pour l\'exercice)</div><div class="tw-scroll"><table><tr><th>N°</th><th>Produit</th><th>Poids</th><th class="num">Prix</th><th>Informations</th></tr>'+
+'<tr><td>1</td><td>Œuf lait garni de fritures</td><td>300 g</td><td class="num">14,50 €</td><td>Contient du lait. Peut contenir des traces de fruits à coque.</td></tr>'+
+'<tr><td>2</td><td>Œuf chocolat noir 70 % garni de pralinés</td><td>300 g</td><td class="num">24,00 €</td><td>Contient noisettes et amandes, et du lait.</td></tr>'+
+'<tr><td>3</td><td>Poule chocolat au lait</td><td>150 g</td><td class="num">9,90 €</td><td>Contient du lait. Sans fruits à coque.</td></tr>'+
+'<tr><td>4</td><td>Lapin chocolat noir 70 %</td><td>120 g</td><td class="num">8,50 €</td><td>Recette sans lait.</td></tr>'+
+'<tr><td>5</td><td>Ballotin de pralinés assortis</td><td>300 g</td><td class="num">29,00 €</td><td>Contient noisettes, amandes et lait.</td></tr>'+
+'<tr><td>6</td><td>Sachet de friture au lait</td><td>200 g</td><td class="num">7,90 €</td><td>Contient du lait. Peut contenir des traces de fruits à coque.</td></tr>'+
+'<tr><td>7</td><td>Cloche chocolat blanc</td><td>150 g</td><td class="num">9,50 €</td><td>Contient du lait. Peut contenir des traces de fruits à coque.</td></tr>'+
+'<tr><td>8</td><td>Grand œuf « Chasse aux œufs » (lait) + 10 petits œufs</td><td>500 g</td><td class="num">32,00 €</td><td>Contient du lait. Peut contenir des traces de fruits à coque.</td></tr></table></div></div>'+
+'<div class="doc"><div class="dt">Document 2 – Ce que t\'ont dit les clients (après tes questions de découverte)</div><ul style="margin:0;padding-left:20px">'+
+'<li><b>A · M. Roche</b> : « C\'est pour ma sœur, elle adore le chocolat noir et les pralinés. Je ne veux pas dépasser 25 €. »</li>'+
+'<li><b>B · Mme Klein</b> : « Pour mon fils de 6 ans. Il ne mange que du chocolat au lait, et il est allergique aux fruits à coque. Pas plus de 10 €. »</li>'+
+'<li><b>C · M. Diallo</b> : « Je ne peux pas manger de lait. Quelque chose pour moi, moins de 10 €. »</li>'+
+'<li><b>D · Mme Petit</b> : « J\'organise une chasse aux œufs pour 10 enfants : il me faut au moins 10 œufs à cacher. Mon budget : 35 €. »</li></ul></div>',
+task:'<div class="task"><div class="tt">✍️ 1) Quel produit conseilles-tu à chaque client ?</div><div class="tw-scroll"><table><tr><th>Client</th><th>N° du produit conseillé</th></tr>'+
+[["A","M. Roche"],["B","Mme Klein"],["C","M. Diallo"],["D","Mme Petit"]].map(function(c){return '<tr><td>'+c[0]+' · '+c[1]+'</td><td>'+sel("m5_p"+c[0],"Produit pour "+c[1],["1","2","3","4","5","6","7","8"])+'</td></tr>';}).join("")+
+'</table></div></div>'+
+'<div class="task"><div class="tt">✍️ 2) Écris l\'argument que tu donnes à Mme Klein</div>'+ta("m5_arg","Argument pour Mme Klein","« Je vous conseille… parce que… »")+'</div>'+
+'<div class="task"><div class="tt">✍️ 3) Quelle vente complémentaire proposes-tu à Mme Petit ? Pourquoi ?</div>'+ta("m5_compl","Vente complémentaire Mme Petit","Ex. : …")+'</div>',
+method:"Pour chaque client, élimine d'abord les produits qui ne respectent pas une contrainte (allergie, goût, budget, nombre de personnes). Il ne doit rester qu'un seul produit. Pour une allergie, une « trace possible » suffit à écarter le produit.",
+hints:["M. Roche : noir + pralinés + 25 € maximum. Le ballotin dépasse le budget.","Mme Klein : lait, sans fruits à coque ni traces, moins de 10 €.","M. Diallo : un seul produit est fait sans lait."],
+q:"Quel est le numéro du produit que tu conseilles à Mme Klein ?"},
+
+{pole:2,emoji:"🛍️",title:"Les commandes à emporter",
+story:"Pour cet exercice, on imagine que la boutique propose le <b>click &amp; collect</b> pour Pâques : on commande en ligne, on retire en boutique. Le Lapin Farceur a envoyé de faux clients pour récupérer des commandes qui ne sont pas à eux. Nous sommes le <b>samedi 27 mars 2027</b>.",
+docs:
+'<div class="doc"><div class="dt">Document 1 – Procédure de retrait des commandes (règles fixées pour cet exercice)</div><ol style="margin:0;padding-left:20px">'+
+'<li>Le numéro de commande donné par le client doit être <b>identique</b> au numéro écrit sur le sac.</li>'+
+'<li>Le client présente une pièce d\'identité <b>à son nom</b> : carte d\'identité, passeport ou permis de conduire.</li>'+
+'<li>Si une autre personne vient : <b>procuration signée</b> par le client + pièce d\'identité de la personne qui vient + copie de la pièce d\'identité du client.</li>'+
+'<li>La commande est gardée <b>7 jours</b> après la date de retrait prévue. Ensuite, elle est annulée et les chocolats retournent en rayon.</li></ol></div>'+
+'<div class="doc"><div class="dt">Document 2 – Les clients de la journée</div><div class="tw-scroll"><table><tr><th>#</th><th>Personne au comptoir</th><th>Commande au nom de</th><th>N° donné / n° sur le sac</th><th>Documents présentés</th><th>Retrait prévu le</th></tr>'+
+'<tr><td>1</td><td>Rose Martin</td><td>Rose Martin</td><td>3104 / 3104</td><td>Carte d\'identité de Rose Martin</td><td>26/03</td></tr>'+
+'<tr><td>2</td><td>Karim Benali</td><td>Karim Benali</td><td>3112 / 3112</td><td>Le SMS de confirmation sur son téléphone, sans pièce d\'identité</td><td>27/03</td></tr>'+
+'<tr><td>3</td><td>Léa Durand</td><td>Sophie Durand (sa mère)</td><td>3120 / 3120</td><td>Procuration signée de Sophie + carte d\'identité de Léa + copie de la carte d\'identité de Sophie</td><td>27/03</td></tr>'+
+'<tr><td>4</td><td>Paul Henry</td><td>Paul Henry</td><td>3127 / 3172</td><td>Passeport de Paul Henry</td><td>27/03</td></tr>'+
+'<tr><td>5</td><td>Chloé Petit</td><td>Chloé Petit</td><td>3095 / 3095</td><td>Carte d\'identité de Chloé Petit</td><td>16/03</td></tr>'+
+'<tr><td>6</td><td>Hugo Lambert</td><td>Hugo Lambert</td><td>3130 / 3130</td><td>Permis de conduire de Hugo Lambert</td><td>27/03</td></tr>'+
+'<tr><td>7</td><td>Noah Simon</td><td>Lucas Girard (son voisin)</td><td>3133 / 3133</td><td>Carte d\'identité de Noah Simon, sans procuration</td><td>26/03</td></tr></table></div></div>',
+task:'<div class="task"><div class="tt">✍️ Décide pour chaque client et justifie</div><div class="tw-scroll"><table><tr><th>#</th><th>Décision</th><th>Motif (règle n°…)</th></tr>'+
+[1,2,3,4,5,6,7].map(function(n){return '<tr><td>'+n+'</td><td>'+sel("m6_d"+n,"Client "+n+" décision",["Je remets la commande","Je refuse"])+'</td><td>'+inp("m6_m"+n,"Client "+n+" motif","Règle…")+'</td></tr>';}).join("")+
+'</table></div></div><div class="task"><div class="tt">✍️ Que dis-tu, poliment, au client n°7 ?</div>'+ta("m6_phrase","Phrase au client 7","« Monsieur, … »")+'</div>',
+method:"Vérifie les 4 règles pour chaque client, dans l'ordre. Il suffit qu'une seule règle ne soit pas respectée pour refuser. Pour la règle 4, compte 7 jours à partir de la date de retrait prévue.",
+hints:["Un SMS n'est pas une pièce d'identité.","Compare les numéros chiffre par chiffre.","16/03 + 7 jours = 23/03 : où est la commande le 27/03 ?"],
+q:"Combien de commandes peux-tu remettre aujourd'hui ?"},
+
+{pole:3,emoji:"📣",title:"L'affiche du Lapin Farceur",
+story:"Pour annoncer l'opération, le Lapin Farceur a préparé une affiche… pleine de pièges. Avant de l'afficher en vitrine, compare chaque ligne avec le plan de l'opération validé par Mme Noisette.",
+docs:
+'<div class="grid2"><div class="doc"><div class="dt">Document 1 – Plan de l\'opération Pâques (validé par Mme Noisette)</div><ul style="margin:0;padding-left:20px">'+
+'<li>Opération du <b>samedi 13 au dimanche 28 mars 2027</b>.</li>'+
+'<li><b>−20 %</b> sur les ballotins assortiment 500 g (prix normal : 21,00 €).</li>'+
+'<li><b>−10 %</b> sur tout le panier dès 30 € d\'achat (total avant remise).</li>'+
+'<li>Dégustation gratuite : <b>samedi 20 mars, de 14 h à 17 h</b>.</li>'+
+'<li>Atelier décoration d\'œufs pour les enfants : <b>gratuit</b>, mercredi 24 mars, de 14 h à 16 h, sur inscription.</li></ul></div>'+
+'<div class="doc"><div class="dt">Document 2 – Horaires de l\'opération (fixés pour l\'exercice)</div><ul style="margin:0;padding-left:20px">'+
+'<li>Du mardi au samedi : 9 h 30 – 19 h.</li>'+
+'<li>Dimanche 28 mars (jour de Pâques) : 9 h – 13 h.</li>'+
+'<li>Fermé le lundi, y compris le lundi de Pâques.</li></ul>'+
+'<p class="src" style="margin:8px 0 0">Prix des produits : voir la fiche prix de la mission « Les étiquettes de Pâques ».</p></div></div>'+
+'<div class="doc"><div class="dt">Document 3 – L\'affiche préparée par le Lapin Farceur</div><div class="poster" style="background:#fff4f7;border:3px dashed #d6517d;border-radius:16px;padding:16px;text-align:center;font-family:var(--display);color:#5a3420;line-height:1.5">'+
+'<div style="font-size:1.5rem;font-weight:800">JOYEUSE PÂQUES CHEZ SCHMITT CHOCOLATIER !</div>'+
+'<div>Œuf au lait 250 g : 9,50 € · Lapin au lait 100 g : 3,90 €</div>'+
+'<div style="font-size:1.2rem;font-weight:800;color:#d6517d">−20 % sur les ballotins 500 g : 21,00 € → 18,00 €</div>'+
+'<div>Offre valable du 13 au 28 mars 2027 · Ouvert le lundi de Pâques de 9 h à 13 h</div>'+
+'<div>Dégustation gratuite samedi 20 mars, de 14 h à 17 h · Atelier décoration d\'œufs, mercredi 24 mars : 5 €</div></div></div>',
+task:'<div class="task"><div class="tt">✍️ Coche chaque ligne fausse de l\'affiche</div><ol class="dlg" id="dlg7">'+
+[
+"« JOYEUSE PÂQUES CHEZ SCHMITT CHOCOLATIER ! »",
+"« Œuf au lait 250 g : 9,50 € »",
+"« Lapin au lait 100 g : 3,90 € »",
+"« −20 % sur les ballotins 500 g : 21,00 € → 18,00 € »",
+"« Offre valable du 13 au 28 mars 2027 »",
+"« Ouvert le lundi de Pâques de 9 h à 13 h »",
+"« Dégustation gratuite samedi 20 mars, de 14 h à 17 h »",
+"« Atelier décoration d'œufs, mercredi 24 mars : 5 € »"
+].map(function(t,i){return '<li><span class="n">'+(i+1)+'</span><span>'+t+'</span><label><input type="checkbox" data-k="m7_c'+(i+1)+'" data-label="Ligne '+(i+1)+' fausse"> Fausse</label></li>';}).join("")+
+'</ol></div><div class="task"><div class="tt">✍️ Réécris correctement chaque ligne fausse</div>'+ta("m7_rewrite","Lignes corrigées","Ligne … : …")+'</div>',
+method:"Pour chaque ligne, vérifie : l'orthographe, les prix (fiche prix), le calcul de la remise, les dates et les horaires (plan de l'opération et horaires de la boutique).",
+hints:["Pâques (la fête) s'écrit au féminin pluriel : on souhaite de « joyeuses » Pâques.","Remise de 20 % sur 21,00 € : 21,00 × 20 ÷ 100 = 4,20 €. Combien reste-t-il à payer ?","Relis les horaires et le plan : qu'est-ce qui est gratuit ? Quels jours la boutique est-elle fermée ?"],
+q:"Combien de lignes de l'affiche sont fausses ?"},
+
+{pole:3,emoji:"🍫",title:"L'atelier dégustation",
+story:"Samedi 20 mars, de 14 h à 17 h, la boutique organise une dégustation gratuite pour faire découvrir la sélection de Pâques. Tu prépares l'animation avec Mme Noisette, ta tutrice (personnage fictif).",
+docs:
+'<div class="doc"><div class="dt">Document 1 – Fiche de préparation de la dégustation</div><ul style="margin:0;padding-left:20px">'+
+'<li>Visiteurs attendus : <b>100</b>.</li>'+
+'<li>On fait goûter <b>3 sortes</b> de chocolat : lait, noir, praliné.</li>'+
+'<li>Chaque visiteur goûte <b>1 carré de chaque sorte</b>.</li>'+
+'<li>Les chocolats de dégustation arrivent en <b>plaques de 24 carrés</b>. On ne coupe pas de plaque à l\'avance : on sort des plaques entières.</li></ul></div>',
+task:'<div class="task"><div class="tt">✍️ 1) Calcule ce qu\'il faut préparer</div><div class="tw-scroll"><table><tr><th>Question</th><th>Réponse</th></tr>'+
+'<tr><td>Nombre de carrés nécessaires pour <b>une</b> sorte</td><td>'+inp("m8_carres","Carrés par sorte")+'</td></tr>'+
+'<tr><td>Nombre de plaques à sortir pour <b>une</b> sorte</td><td>'+inp("m8_plaques","Plaques par sorte")+'</td></tr>'+
+'<tr><td>Nombre total de plaques pour les 3 sortes</td><td>'+inp("m8_total","Total de plaques")+'</td></tr></table></div></div>'+
+'<div class="task"><div class="tt">✍️ 2) Bonne pratique pendant la dégustation ?</div><div class="tw-scroll"><table><tr><th>Action</th><th>Je le fais ?</th></tr>'+
+["Afficher la liste des allergènes de chaque chocolat","Servir avec une pince ou des piques, jamais avec les doigts","Installer la table devant la porte, dans le passage","Proposer la dégustation à chaque client, avec le sourire","Laisser le plateau ouvert toute la journée, même vide","Profiter de la dégustation pour présenter les produits de Pâques","Insister si le client refuse de goûter","Prévoir une poubelle et des serviettes"].map(function(t,i){return '<tr><td>'+t+'</td><td>'+sel("m8_p"+(i+1),"Pratique "+(i+1),["Oui","Non"])+'</td></tr>';}).join("")+
+'</table></div></div>',
+method:"Carrés pour une sorte = nombre de visiteurs × 1. Plaques = carrés ÷ 24, arrondi à la plaque supérieure (on ne sort que des plaques entières). Total = plaques pour une sorte × 3.",
+hints:["100 visiteurs × 1 carré = 100 carrés pour une sorte.","100 ÷ 24 = 4,16… : 4 plaques ne suffisent pas.","Une bonne pratique respecte l'hygiène, la sécurité et le client."],
+q:"Combien de plaques sors-tu pour une seule sorte de chocolat ?"},
+
+{pole:3,emoji:"🌷",title:"L'ambiance de printemps",
+story:"Pour que la visite soit une vraie <b>expérience gourmande</b>, Mme Noisette veut travailler l'ambiance de la boutique avec les cinq sens. Classe chaque idée, puis réponds à la grande question du scénario.",
+docs:
+'<div class="doc"><div class="dt">Document 1 – Les facteurs d\'ambiance</div><p style="margin:0">Une ambiance se construit avec les <b>cinq sens</b> : la <b>vue</b> (décor, couleurs, lumière), l\'<b>ouïe</b> (musique, sons), l\'<b>odorat</b> (odeurs), le <b>toucher</b> (matières) et le <b>goût</b> (dégustation).</p></div>',
+task:'<div class="task"><div class="tt">✍️ 1) Quel sens chaque idée fait-elle travailler ?</div><div class="tw-scroll"><table><tr><th>Idée d\'ambiance</th><th>Sens</th></tr>'+
+["Une guirlande de petits œufs colorés au plafond","Une musique douce et printanière, à faible volume","Une odeur de cacao à l'entrée de la boutique","Un plateau de dégustation de chocolats","Des nappes en lin et des paniers en osier que l'on peut toucher","Un éclairage chaud sur les œufs en vitrine","Des couleurs pastel (jaune, vert, rose) sur les présentoirs","Des chants d'oiseaux en fond sonore"].map(function(t,i){return '<tr><td>'+t+'</td><td>'+sel("m9_s"+(i+1),"Idée "+(i+1),["Vue","Ouïe","Odorat","Toucher","Goût"])+'</td></tr>';}).join("")+
+'</table></div></div>'+
+'<div class="task"><div class="tt">✍️ 2) Réponds à la problématique du scénario</div><p style="margin:0 0 8px"><b>« Comment dynamiser les ventes de Pâques et offrir une expérience client gourmande et attractive ? »</b><br>Écris 5 lignes en t\'appuyant sur tes 9 missions et utilise au moins 3 mots du pro.</p>'+ta("m9_prob","Réponse à la problématique","Pour dynamiser les ventes de Pâques, …")+'</div>',
+method:"Demande-toi : est-ce qu'on le voit, l'entend, le sent, le touche ou le goûte ? Une idée ne fait travailler qu'un seul sens dans cet exercice.",
+hints:["La lumière et les couleurs se voient.","Les sons et la musique s'entendent.","Compte bien toutes les idées qui se voient : il y en a plusieurs."],
+q:"Combien d'idées font travailler la vue ?"}
+];
+/* ---------- Rendu des missions ---------- */
+var LVN={1:"🍬 Apprenti",2:"🧹 Confirmé",3:"🔮 Maître"};
+M.forEach(function(m,i){
+  var host=document.getElementById("p"+m.pole);
+  var art=document.createElement("article");
+  art.className="mission";art.id="m"+(i+1);
+  art.innerHTML=
+   '<div class="mhead"><span class="me" aria-hidden="true">'+m.emoji+'</span><div><div class="mn">Pôle '+m.pole+' · Mission '+(i+1)+' sur 9</div><h3>'+m.title+'</h3></div><span class="badge">Chiffre trouvé ✓</span>'+
+   '<div class="lvsel" role="group" aria-label="Niveau pour cette mission">'+[1,2,3].map(function(l){return '<button data-l="'+l+'">'+LVN[l]+'</button>';}).join("")+'</div></div>'+
+   '<div class="mbody"><p class="story">'+m.story+'</p>'+
+   '<div class="help meth"><div class="ht">🍬 Méthode</div><div>'+m.method+'</div></div>'+
+   '<div class="help hints"><div class="ht">💡 Indices</div><ol class="hint-list"></ol><button class="btn small lemon morehint" style="margin-top:8px">Révéler un indice</button></div>'+
+   m.docs+m.task+
+   '<div class="digitbox"><span class="q">🔢 '+m.q+'</span><input maxlength="1" inputmode="numeric" aria-label="Chiffre de la mission '+(i+1)+'"><button class="btn small check">Vérifier</button><span class="fb" aria-live="polite"></span></div></div>';
+  host.appendChild(art);
+  var shown=0;
+  function paintLevel(){
+    var lv=state.lv[i]||state.globalLv;
+    art.querySelectorAll(".lvsel button").forEach(function(b){b.setAttribute("aria-pressed",String(+b.dataset.l===lv));});
+    art.querySelector(".meth").style.display=lv===1?"":"none";
+    var hb=art.querySelector(".hints"),ol=hb.querySelector("ol"),more=hb.querySelector(".morehint");
+    hb.style.display=lv===3?"none":"";
+    var n=lv===1?m.hints.length:shown;
+    ol.innerHTML=m.hints.slice(0,n).map(function(h){return "<li>"+h+"</li>";}).join("");
+    more.style.display=(lv===2&&shown<m.hints.length)?"":"none";
+    if(lv===2&&shown===0)ol.innerHTML='<li style="list-style:none;margin-left:-20px;color:var(--muted)">Aucun indice révélé pour l\'instant.</li>';
+  }
+  art.querySelectorAll(".lvsel button").forEach(function(b){b.addEventListener("click",function(){state.lv[i]=+b.dataset.l;save();paintLevel();});});
+  art.querySelector(".morehint").addEventListener("click",function(){shown++;state.a["hints_m"+(i+1)]=shown;save();paintLevel();});
+  shown=state.a["hints_m"+(i+1)]||0;
+  m._paint=paintLevel;paintLevel();
+  var di=art.querySelector(".digitbox input"),fb=art.querySelector(".fb");
+  if(state.digits[i]!==undefined){di.value=state.digits[i];art.classList.add("done");fb.textContent="Farce déjouée !";fb.className="fb ok";}
+  art.querySelector(".check").addEventListener("click",function(){
+    var v=di.value.trim();
+    if(!/^\d$/.test(v)){fb.textContent="Tape un seul chiffre, de 0 à 9.";fb.className="fb ko";return;}
+    state.a["essais_m"+(i+1)]=(state.a["essais_m"+(i+1)]||0)+1;
+    if(+v===good(i)){state.digits[i]=+v;save();art.classList.add("done");fb.textContent="Farce déjouée ! Le Grand Œuf reçoit une décoration.";fb.className="fb ok";paintJars(true);rain(["🥚","🐣","🍫","🌷"]);}
+    else{delete state.digits[i];save();art.classList.remove("done");fb.textContent="Une farce t'a échappé : recontrôle tes documents.";fb.className="fb ko";var box=art.querySelector(".digitbox");box.classList.remove("shake");void box.offsetWidth;box.classList.add("shake");paintJars(false);}
+  });
+});
+
+/* niveau global */
+document.querySelectorAll("#levels .lv").forEach(function(b){
+  b.addEventListener("click",function(){state.globalLv=+b.dataset.lv;state.lv={};save();paintGlobal();M.forEach(function(m){m._paint();});});
+});
+function paintGlobal(){document.querySelectorAll("#levels .lv").forEach(function(b){b.setAttribute("aria-pressed",String(+b.dataset.lv===state.globalLv));});}
+paintGlobal();
+
+/* ---------- Champs sauvegardés ---------- */
+document.querySelectorAll("[data-k]").forEach(function(el){
+  var k=el.dataset.k;
+  if(state.a[k]!==undefined){if(el.type==="checkbox")el.checked=!!state.a[k];else el.value=state.a[k];}
+  el.addEventListener(el.tagName==="SELECT"||el.type==="checkbox"?"change":"input",function(){
+    state.a[k]=el.type==="checkbox"?el.checked:el.value;save();
+    if(el.type==="checkbox"){var li=el.closest("li");if(li)li.classList.toggle("flag",el.checked);}
+  });
+  if(el.type==="checkbox"&&el.checked){var li=el.closest("li");if(li)li.classList.add("flag");}
+});
+
+/* ---------- Bocaux + vitrine ---------- */
+var jars=document.getElementById("jars");
+for(var j=0;j<9;j++){var d=document.createElement("div");d.className="jar";d.innerHTML='<span class="fill"></span><span class="d">?</span>';d.title="Mission "+(j+1);jars.appendChild(d);}
+function paintJars(){
+  var n=0;
+  [].forEach.call(jars.children,function(el,i){var on=state.digits[i]!==undefined;el.classList.toggle("on",on);el.querySelector(".d").textContent=on?state.digits[i]:"?";if(on)n++;});
+  document.getElementById("jarlabel").textContent=(n===0?"Œufs vides":n===9?"Tous les œufs sont pleins !":"Les œufs se remplissent")+" · "+n+"/9 chiffres retrouvés";
+  var egg=document.getElementById("egg"), open_=!!state.final&&!window.__hold;
+  for(var q=0;q<9;q++){ egg.classList.toggle("on"+(q+1), state.digits[q]!==undefined); }
+  egg.classList.toggle("open",open_);
+  document.getElementById("eggcap").textContent=open_?"🐣 Joyeuses Pâques !":n+" décoration"+(n>1?"s":"")+" sur 9";
+  document.getElementById("relight").innerHTML=state.final?"🐣 <b>Le Grand Œuf est ouvert !</b> Toutes les farces sont déjouées : l'Opération Pâques peut commencer. Termine en répondant à la problématique si ce n'est pas encore fait.":n===0?"🥚 <b>Le Grand Œuf est tout nu</b> : le Lapin Farceur a volé toutes ses décorations ! <b>Pour le décorer</b>, réussis les 9 missions : chaque chiffre trouvé ajoute une décoration (ruban, nœud, fleurs, étoiles…). Avec les 9 chiffres, ouvre le <a href='#bocal'>Grand Œuf</a> pour découvrir sa surprise.":n<9?"🎀 <b>Le Grand Œuf se décore ("+n+"/9).</b> Continue les missions pour retrouver toutes ses décorations.":"✨ <b>Le Grand Œuf est entièrement décoré !</b> Tape maintenant le code dans le <a href='#bocal'>Grand Œuf</a> pour l'ouvrir.";
+}
+paintJars();
+
+/* ---------- Pluie de bonbons ---------- */
+var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+function rain(set,count){
+  if(reduce)return;
+  count=count||22;
+  for(var i=0;i<count;i++){(function(i){
+    var s=document.createElement("span");s.className="rain";s.textContent=set[i%set.length];
+    s.style.left=(Math.random()*100)+"vw";s.style.animationDuration=(2.2+Math.random()*2.2)+"s";s.style.animationDelay=(Math.random()*0.8)+"s";
+    document.body.appendChild(s);setTimeout(function(){s.remove();},5500);
+  })(i);}
+}
+
+/* ---------- Grimoire ---------- */
+var G=[
+["🎁","Podium","Support surélevé qui met en scène quelques produits pour attirer le regard, souvent à l'entrée ou en vitrine.",[]],
+["🎭","Théâtralisation","Mettre en scène les produits autour d'un thème (Pâques, le printemps…) pour créer une ambiance et donner envie.",[]],
+["⚖️","Prix au kilo","Prix ramené à 1 kg : il permet de comparer des produits de poids différents.",[]],
+["🔲","Facing","Nombre de produits identiques posés côte à côte et vus de face sur une tablette.",[]],
+["🔄","Réassort","Remettre des produits en rayon pour que la tablette soit de nouveau pleine.",[]],
+["🎪","Tête de gondole","Bout d'un meuble de vente, très visible, utilisé pour les promotions et les temps forts comme Pâques.",[]],
+["📣","PLV","Publicité sur le lieu de vente : affiche, présentoir, stop-rayon, panneau…",[]],
+["🪧","ILV","Information sur le lieu de vente : étiquettes prix, panneaux d'orientation, horaires…",[]],
+["🙋","Découverte des besoins","Étape de la vente où l'on pose des questions pour comprendre ce que veut le client.",[]],
+["💡","Argument","Phrase qui montre au client en quoi le produit répond à son besoin.",[]],
+["🧺","Vente complémentaire","Proposer au client un produit qui va avec ce qu'il achète déjà.",[]],
+["⚠️","Allergène","Ingrédient qui peut provoquer une allergie (fruits à coque, lait…). On vérifie toujours l'étiquette, on ne devine jamais.",[]],
+["🛍️","Click & collect","Le client commande sur internet, puis vient retirer sa commande en magasin.",[]],
+["📄","Procuration","Document signé par lequel une personne en autorise une autre à agir à sa place.",[]],
+["🏷️","Remise","Réduction de prix accordée sur un produit ou sur tout le panier.",[]],
+["🍫","Animation commerciale","Action organisée en magasin (dégustation, atelier…) pour attirer les clients et dynamiser les ventes.",[]],
+["🌷","Facteurs d'ambiance","Éléments qui jouent sur les cinq sens (vue, ouïe, odorat, toucher, goût) pour rendre la visite agréable.",[]]
+];
+var cards=document.getElementById("cards");
+G.forEach(function(g,i){
+  var c=document.createElement("div");c.className="flip";
+  c.innerHTML='<div class="in"><div class="face front" tabindex="0" role="button" aria-label="Retourner la carte '+g[1]+'"><div class="e">'+g[0]+'</div><div class="w">'+g[1]+'</div></div><div class="face back" tabindex="0" role="button" aria-label="Retourner la carte"><div>'+g[2]+'</div><label class="know"><input type="checkbox"> je sais l\'expliquer</label></div></div>';
+  cards.appendChild(c);
+  var cb=c.querySelector("input");cb.checked=!!state.know[i];
+  cb.addEventListener("click",function(e){e.stopPropagation();});
+  cb.addEventListener("change",function(){state.know[i]=cb.checked;save();paintKnow();});
+  c.querySelectorAll(".face").forEach(function(f){
+    f.addEventListener("click",function(e){if(e.target.closest(".know"))return;c.classList.toggle("open");});
+    f.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();c.classList.toggle("open");}});
+  });
+});
+function paintKnow(){var n=Object.keys(state.know).filter(function(k){return state.know[k];}).length;document.getElementById("knowcount").textContent=n+" mot"+(n>1?"s":"")+" maîtrisé"+(n>1?"s":"")+" sur "+G.length;}
+paintKnow();
+
+/* ---------- Grand Bocal ---------- */
+var codein=document.getElementById("codein");
+for(var c=0;c<9;c++){var ci=document.createElement("input");ci.maxLength=1;ci.inputMode="numeric";ci.setAttribute("aria-label","Chiffre "+(c+1)+" du code");codein.appendChild(ci);}
+var cis=codein.querySelectorAll("input");
+cis.forEach(function(el,i){
+  el.addEventListener("input",function(){el.value=el.value.replace(/\D/g,"").slice(0,1);if(el.value&&i<8)cis[i+1].focus();});
+  el.addEventListener("keydown",function(e){if(e.key==="Backspace"&&!el.value&&i>0)cis[i-1].focus();});
+});
+var vault=document.getElementById("vault"),vmsg=document.getElementById("vaultMsg");
+function openVault(anim){vault.classList.add("open");document.getElementById("lockIcon").textContent="🔓";vmsg.textContent="Le Grand Œuf est ouvert ! Remonte voir sa surprise. Bravo, l'Opération Pâques peut commencer !";vmsg.className="status fb ok";if(anim){rain(["🥚","🐣","🍫","🐰","🌷","✨"],46);window.__hold=true;}paintJars();
+  if(anim){setTimeout(function(){document.getElementById("egg").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});if(window.__shake)window.__shake();setTimeout(function(){window.__hold=false;paintJars();if(window.__boom)window.__boom();},1300);},2200);}}
+if(state.final){cis.forEach(function(el,i){el.value=good(i);});openVault(false);}
+document.getElementById("vaultBtn").addEventListener("click",function(){
+  var v=[].map.call(cis,function(e){return e.value;}).join("");
+  if(v.length<9){vmsg.textContent="Il manque des chiffres : il en faut 9.";vmsg.className="status fb ko";return;}
+  var ok=true;for(var i=0;i<9;i++){if(+v[i]!==good(i))ok=false;}
+  state.a.code_final=v;
+  if(ok){audioInit();state.final=true;save();openVault(true);}
+  else{save();vmsg.textContent="Le Grand Œuf reste scellé. Retourne vérifier les missions dont l'œuf est vide.";vmsg.className="status fb ko";vault.classList.remove("shake");void vault.offsetWidth;vault.classList.add("shake");}
+});
+
+/* ---------- Grand final : son, paillettes, feux d'artifice ---------- */
+var AC=null;
+function audioInit(){ try{ if(!AC){ var C=window.AudioContext||window.webkitAudioContext; if(C) AC=new C(); } if(AC&&AC.state==="suspended") AC.resume(); }catch(e){ AC=null; } }
+function sTone(f,t,d,type,vol,f2){ if(!AC) return; var o=AC.createOscillator(), g=AC.createGain(); o.type=type||"sine"; o.frequency.setValueAtTime(f,t); if(f2) o.frequency.exponentialRampToValueAtTime(f2,t+d);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.2,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+d); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+d+0.05); }
+function sNoise(t,d,vol,freq,ft){ if(!AC) return; var n=Math.floor(AC.sampleRate*d), buf=AC.createBuffer(1,n,AC.sampleRate), data=buf.getChannelData(0); for(var i=0;i<n;i++) data[i]=(Math.random()*2-1)*Math.pow(1-i/n,2);
+  var s=AC.createBufferSource(); s.buffer=buf; var f=AC.createBiquadFilter(); f.type=ft||"bandpass"; f.frequency.value=freq||2000; var g=AC.createGain(); g.gain.value=vol||0.4; s.connect(f); f.connect(g); g.connect(AC.destination); s.start(t); }
+function sfxCrack(){ if(!AC) return; var t=AC.currentTime; [0,0.35,0.6,0.8,0.95].forEach(function(dt,k){ sNoise(t+dt,0.06,0.5+k*0.1,1800+k*300,"bandpass"); }); }
+function sfxBoom(){ if(!AC) return; var t=AC.currentTime;
+  sTone(160,t,0.7,"sine",0.6,35); sNoise(t,0.5,0.7,900,"lowpass"); sNoise(t,0.25,0.5,4000,"highpass");
+  for(var i=0;i<26;i++){ sTone(1600+Math.random()*3200,t+0.15+Math.random()*1.8,0.25,"sine",0.06+Math.random()*0.06); }
+  var mel=[[523.25,0.5],[659.25,0.62],[783.99,0.74],[1046.5,0.86],[783.99,1.1],[1046.5,1.22],[1318.5,1.45]];
+  mel.forEach(function(n){ sTone(n[0],t+n[1],n[1]>=1.45?0.9:0.22,"triangle",0.22); sTone(n[0]*2,t+n[1],0.18,"sine",0.05); });
+  [2.2,2.6,3.0,3.3].forEach(function(dt){ sNoise(t+dt,0.18,0.35,600,"lowpass"); for(var k=0;k<8;k++) sTone(2000+Math.random()*2500,t+dt+0.05+Math.random()*0.5,0.2,"sine",0.05); });
+}
+var FX=null;
+function fxCanvas(){ if(FX) return FX; var c=document.createElement("canvas"); c.id="fxCanvas"; c.setAttribute("aria-hidden","true"); document.body.appendChild(c);
+  var ctx=c.getContext("2d"); FX={c:c,ctx:ctx,p:[],rk:[],run:false};
+  function rs(){ var r=window.devicePixelRatio||1; c.width=innerWidth*r; c.height=innerHeight*r; c.style.width=innerWidth+"px"; c.style.height=innerHeight+"px"; ctx.setTransform(r,0,0,r,0,0); } rs(); addEventListener("resize",rs); return FX; }
+var COLS=["#f4c84a","#ffe28a","#d6517d","#f4a7b9","#a8d8b9","#c9b6e8","#ffffff","#8a5634","#5c3317"];
+function fxBurst(x,y,n,spd,opts){ var F=fxCanvas(); opts=opts||{};
+  for(var i=0;i<n;i++){ var a=opts.cone?(opts.dir+(Math.random()-.5)*opts.cone):Math.random()*Math.PI*2, v=spd*(0.35+Math.random()*0.9);
+    var kind=Math.random(); F.p.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:0.12+Math.random()*0.1,life:1,dec:0.004+Math.random()*0.007,
+      s:2+Math.random()*5,rot:Math.random()*6,vr:(Math.random()-.5)*0.4,col:opts.cols?opts.cols[Math.floor(Math.random()*opts.cols.length)]:COLS[Math.floor(Math.random()*COLS.length)],
+      t:kind<0.45?"conf":kind<0.8?"glit":"star", tw:Math.random()*6}); } fxRun(); }
+function fxRocket(x){ var F=fxCanvas(); F.rk.push({x:x,y:innerHeight+10,vy:-(9+Math.random()*4),vx:(Math.random()-.5)*2,ty:innerHeight*(0.15+Math.random()*0.3)}); fxRun(); }
+function fxStar(ctx,r){ ctx.beginPath(); for(var i=0;i<10;i++){ var a=i*Math.PI/5-Math.PI/2, rr=i%2?r*0.45:r; ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr);} ctx.closePath(); ctx.fill(); }
+function fxRun(){ var F=FX; if(F.run) return; F.run=true;
+  (function loop(){ var ctx=F.ctx; ctx.clearRect(0,0,innerWidth,innerHeight);
+    F.rk=F.rk.filter(function(r){ r.x+=r.vx; r.y+=r.vy; r.vy+=0.12; ctx.fillStyle="#fff3b0"; ctx.beginPath(); ctx.arc(r.x,r.y,3,0,7); ctx.fill();
+      if(r.y<=r.ty||r.vy>=0){ fxBurst(r.x,r.y,90,7,{cols:[COLS[Math.floor(Math.random()*6)],"#ffffff","#f4c84a"]}); if(AC){ var t=AC.currentTime; sNoise(t,0.2,0.3,500,"lowpass"); } return false; } return true; });
+    F.p=F.p.filter(function(p){ p.vx*=0.985; p.vy=p.vy*0.985+p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.life-=p.dec; p.tw+=0.3;
+      if(p.life<=0||p.y>innerHeight+40) return false;
+      ctx.save(); ctx.globalAlpha=Math.max(0,Math.min(1,p.life*1.4)); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.col;
+      if(p.t==="conf"){ ctx.fillRect(-p.s,-p.s*0.4,p.s*2,p.s*0.8); }
+      else if(p.t==="glit"){ ctx.globalAlpha*=0.55+0.45*Math.sin(p.tw); ctx.shadowColor=p.col; ctx.shadowBlur=8; ctx.beginPath(); ctx.arc(0,0,p.s*0.45,0,7); ctx.fill(); }
+      else { ctx.shadowColor="#fff3b0"; ctx.shadowBlur=10; fxStar(ctx,p.s*1.1); }
+      ctx.restore(); return true; });
+    if(F.p.length||F.rk.length) requestAnimationFrame(loop); else { F.run=false; ctx.clearRect(0,0,innerWidth,innerHeight); } })(); }
+function fxBravo(){ var d=document.getElementById("bravo"); if(!d){ d=document.createElement("div"); d.id="bravo"; d.setAttribute("role","status"); d.innerHTML='<div class="bv"><span class="b1">🐣 Joyeuses Pâques ! 🍫</span><span class="b2">Le Grand Œuf est ouvert : toutes les farces sont déjouées !</span></div>'; d.addEventListener("click",function(){ d.classList.remove("on"); }); document.body.appendChild(d); }
+  d.classList.remove("on"); void d.offsetWidth; d.classList.add("on"); setTimeout(function(){ d.classList.remove("on"); },5200); }
+function fxFlash(){ var f=document.createElement("div"); f.className="flash"; document.body.appendChild(f); setTimeout(function(){ f.remove(); },900); }
+window.__shake=function(){ var e=document.getElementById("egg"); e.classList.add("shaking"); sfxCrack(); };
+window.__boom=function(){
+  var e=document.getElementById("egg"); e.classList.remove("shaking"); e.classList.add("blast"); setTimeout(function(){ e.classList.remove("blast"); },2600);
+  sfxBoom(); if(reduce){ fxBravo(); return; }
+  fxFlash(); fxBravo(); document.body.classList.add("quake"); setTimeout(function(){ document.body.classList.remove("quake"); },650);
+  var r=e.getBoundingClientRect(), x=r.left+r.width/2, y=r.top+r.height*0.45;
+  fxBurst(x,y,220,13); fxBurst(x,y,90,8,{cols:["#5c3317","#8a5634","#3e2010"]});
+  setTimeout(function(){ fxBurst(0,innerHeight,120,16,{dir:-Math.PI/3,cone:0.6}); fxBurst(innerWidth,innerHeight,120,16,{dir:-2*Math.PI/3,cone:0.6}); },350);
+  [700,1100,1500,1900,2300,2700,3100].forEach(function(dt,k){ setTimeout(function(){ fxRocket(innerWidth*(0.15+0.7*Math.random())); },dt); });
+  setTimeout(function(){ fxBurst(x,y,160,11); },1300);
+};
+
+/* ---------- PDF ---------- */
+var pdfBtn=document.getElementById("pdfBtn");
+var downloads=null;
+if(window.claude&&typeof window.claude.use==="function"){
+  window.claude.use("downloads").then(function(d){downloads=d;}).catch(function(){downloads=null;});
+}
+function clean(s){return String(s==null?"":s).replace(/€/g," EUR").replace(/œ/g,"oe").replace(/Œ/g,"Oe").replace(/[’‘]/g,"'").replace(/[«»]/g,'"').replace(/[\u2013\u2014]/g,"-").replace(/[^\x09\x0A\x0D\x20-\x7E\u00A0-\u00FF]/g,"").trim();}
+function buildPDF(){
+  var J=window.jspdf&&window.jspdf.jsPDF;if(!J)return null;
+  var doc=new J({unit:"mm",format:"a4"});var y=18,W=180;
+  function line(t,o){o=o||{};doc.setFont("helvetica",o.b?"bold":"normal");doc.setFontSize(o.s||11);
+    doc.splitTextToSize(clean(t),W).forEach(function(l){if(y>282){doc.addPage();y=18;}doc.text(l,15,y);y+=(o.s||11)*0.45+1.2;});}
+  line("Schmitt Chocolatier (Nancy) - Le Grand Oeuf de Paques",{b:1,s:15});y+=2;
+  line("Nom : "+(state.a.id_nom||"")+"    Prenom : "+(state.a.id_prenom||""));
+  line("Date d'export : "+new Date().toLocaleString("fr-FR"));
+  var n=Object.keys(state.digits).length;
+  line("Chiffres retrouves : "+n+"/9    Grand Oeuf : "+(state.final?"OUVERT":"ferme")+"    Mots du Ballotin maitrises : "+Object.keys(state.know).filter(function(k){return state.know[k];}).length+"/"+G.length);
+  y+=3;
+  M.forEach(function(m,i){
+    var lv=state.lv[i]||state.globalLv;
+    line("Mission "+(i+1)+" - "+m.title,{b:1,s:13});
+    line("Chiffre : "+(state.digits[i]!==undefined?state.digits[i]+" (valide)":"non trouve")+"   |   Essais : "+(state.a["essais_m"+(i+1)]||0));
+    document.querySelectorAll("#m"+(i+1)+" [data-k]").forEach(function(el){
+      var v=state.a[el.dataset.k];
+      if(el.type==="checkbox"){if(v)line("- "+el.dataset.label);}
+      else line("- "+el.dataset.label+" : "+(v?v:"(vide)"));
+    });
+    aePdf(i,line);
+    y+=3;
+  });
+  if(state.a.code_final)line("Dernier code tape : "+state.a.code_final,{b:1});
+  return doc;
+}
+pdfBtn.addEventListener("click",function(){
+  var doc=buildPDF();
+  var name="Schmitt_Paques_"+clean((state.a.id_nom||"eleve")+"_"+(state.a.id_prenom||"")).replace(/[^A-Za-z0-9_-]+/g,"_")+".pdf";
+  if(!doc){alert("Le générateur de PDF n'a pas pu se charger. Vérifie ta connexion internet puis réessaie.");return;}
+  if(downloads){
+    downloads.save({filename:name,data:doc.output("blob")}).catch(function(err){
+      if(err&&err.code==="declined")return;
+      try{doc.save(name);}catch(e){alert("Le téléchargement est bloqué ici. Ouvre la page dans un nouvel onglet puis réessaie.");}
+    });
+  }else{
+    try{doc.save(name);}catch(e){alert("Le téléchargement est bloqué ici. Ouvre la page dans un nouvel onglet puis réessaie.");}
+  }
+});
+
+/* ---------- Étapes : un exercice à la fois, bouton Suivant, rien d'oublié ---------- */
+state.step=state.step||{}; state.smax=state.smax||{}; state.passed=state.passed||{};
+var $=function(s,r){return (r||document).querySelector(s);};
+function toast(t){var el=$("#toast");if(!el){el=document.createElement("div");el.id="toast";el.setAttribute("role","status");document.body.appendChild(el);}el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on");},3200);}
+function isLocked(i){ return i>0 && !state.passed[i-1] && !state.unlockAll; }
+function filledEl(el){ return el.type==="checkbox" ? el.checked : String(el.value||"").trim()!==""; }
+/* ---------- Auto-évaluation : profils des grilles nationales CAP EPC (EP2, EP3) ---------- */
+var AEP=["1 · Novice","2 · Débrouillé","3 · Averti","4 · Expert"];
+var AEC={
+ A:["Approvisionner, mettre en rayon, ranger (EP2)","Approvisionnement conforme aux consignes et rotation des produits",
+   ["Je n'approvisionne pas en respectant les consignes et les règles ; je ne vois pas les anomalies.","J'approvisionne en respectant seulement une partie des consignes et des règles.","J'approvisionne correctement, je repère les ruptures et j'applique les règles de présentation.","J'approvisionne en bonne quantité et qualité, j'anticipe les ruptures, je repère les anomalies et j'assure la rotation des produits."]],
+ B:["Mettre en valeur les produits et l'espace commercial (EP2)","Présentation des produits attractive et aménagement de l'espace",
+   ["Je ne respecte pas les consignes de mise en valeur des produits et de l'espace commercial.","Je mets en valeur les produits et l'espace commercial seulement en partie.","Je mets correctement en valeur les produits et l'espace commercial.","Je mets en valeur avec rigueur et créativité, en respectant les préconisations et les règles."]],
+ C:["Installer et mettre à jour la signalétique (EP2)","Signalétique conforme, fiable et visible",
+   ["Ma signalétique (étiquettes, affiches) n'est pas conforme aux consignes.","Ma signalétique est peu adaptée et comporte des erreurs.","Ma signalétique est conforme aux consignes et les informations sont fiables.","Ma signalétique est conforme, fiable et lisible ; je vérifie l'exactitude et je repère les anomalies."]],
+ D:["Hygiène, sécurité et économie d'effort (EP2)","Respect des règles d'hygiène et de sécurité",
+   ["Je ne respecte pas les règles d'hygiène et de sécurité.","Je respecte les règles d'hygiène et de sécurité quand on me guide.","Je respecte les règles d'hygiène et de sécurité en suivant les consignes.","Je respecte les règles d'hygiène et de sécurité en autonomie, dans toutes les situations."]],
+ E:["Prendre contact avec le client (EP3)","Adaptation de l'accueil aux codes de l'entreprise",
+   ["Je n'accueille pas le client.","J'accueille le client sans respecter les exigences de la boutique.","J'accueille le client en respectant les exigences de la boutique.","J'accueille le client en respectant les exigences de la boutique et je crée un climat de confiance."]],
+ F:["Accompagner le parcours client (EP3)","Qualité de l'écoute et de l'identification de la demande",
+   ["Je ne cherche pas à identifier la demande du client.","Je pose des questions imprécises et j'écoute peu.","Je pose des questions et j'écoute activement pour cerner les principaux besoins.","Je pose des questions qui identifient tous les besoins, avec écoute active et empathie."]],
+ G:["Accompagner le parcours client (EP3)","Pertinence des conseils apportés",
+   ["Je ne propose pas de conseil.","Je propose des conseils qui ne sont pas adaptés aux produits.","Je propose des conseils adaptés qui répondent aux principaux besoins du client.","Je propose des conseils adaptés, j'accompagne le client dans son choix et je vérifie qu'il est d'accord."]],
+ H:["Accompagner le parcours client (EP3)","Présentation, démonstration ou dégustation convaincante",
+   ["Je ne m'appuie pas sur les caractéristiques des produits.","Je cite des avantages qui ne correspondent pas à la demande du client.","Je m'appuie sur des avantages adaptés pendant la présentation ou la dégustation.","Je m'appuie sur des avantages convaincants et je propose des produits ou services complémentaires pertinents."]],
+ I:["Accompagner le parcours client (EP3)","Respect des procédures de remise des colis et commandes",
+   ["Je n'applique pas les procédures de remise.","J'applique les procédures de remise.","J'applique correctement les procédures de remise, avec de l'aide.","J'applique correctement les procédures de remise, en autonomie, en vérifiant l'identité du client."]],
+ K:["Communiquer (EP3)","Communication verbale et non verbale adaptée à la vente",
+   ["Je m'exprime avec difficulté et mon attitude n'est pas adaptée.","Je m'exprime avec des approximations (clarté, attitude).","Je m'exprime clairement et mon attitude est correcte.","Je m'exprime clairement avec un vocabulaire et une attitude professionnels."]]
+};
+var AEM=[["B","C"],["C"],["A","B"],["E","K"],["F","G"],["I","K"],["C","B"],["H","D"],["B"]];
+function aeKey(i,c){ return "ae_m"+(i+1)+"_"+c; }
+function aeTxt(i){ return "ae_m"+(i+1)+"_txt"; }
+function aeDone(i){ return AEM[i].every(function(c){ return !!state.a[aeKey(i,c)]; }) && String(state.a[aeTxt(i)]||"").trim()!==""; }
+function buildAE(i){
+  var d=document.createElement("div"); d.className="task aebox";
+  var h='<div class="tt">📋 Mon auto-évaluation · Mission '+(i+1)+'</div><p class="src" style="margin:0 0 10px">Pour chaque critère, choisis le profil qui te ressemble vraiment aujourd\'hui. Sois honnête : c\'est comme ça qu\'on progresse. <i>Profils et critères repris des grilles nationales d\'évaluation du CAP EPC.</i></p>';
+  AEM[i].forEach(function(c){ var C=AEC[c];
+    h+='<fieldset class="aecrit" data-c="'+c+'"><legend><b>'+C[0]+'</b><br><span>'+C[1]+'</span></legend><div class="aeopts">'+
+      C[2].map(function(t,j){ return '<label class="aeopt p'+(j+1)+'"><input type="radio" name="ae_'+i+'_'+c+'" value="'+(j+1)+'"><span class="aep">'+AEP[j]+'</span><span class="aed">'+t+'</span></label>'; }).join("")+'</div></fieldset>'; });
+  h+='<label class="aetxt"><b>Ce que je dois encore améliorer</b><textarea placeholder="Ex. : je dois vérifier deux fois mes calculs…"></textarea></label>';
+  d.innerHTML=h;
+  d.querySelectorAll('input[type=radio]').forEach(function(r){
+    var c=r.name.split("_")[2]; if(String(state.a[aeKey(i,c)])===r.value) r.checked=true;
+    r.addEventListener("change",function(){ state.a[aeKey(i,c)]=+r.value; save(); evalPassed(i); });
+  });
+  var tx=d.querySelector("textarea"); tx.value=state.a[aeTxt(i)]||"";
+  tx.addEventListener("input",function(){ state.a[aeTxt(i)]=tx.value; save(); evalPassed(i); });
+  return d;
+}
+function evalPassed(i){
+  var was=!!state.passed[i]; state.passed[i]=state.digits[i]!==undefined && aeDone(i); save();
+  if(S[i]){ refresh(i); if(was!==state.passed[i]){ paint(i); if(S[i+1]) paint(i+1); } }
+}
+function aeMissing(i){
+  var box=S[i].aeBox, out=[];
+  box.querySelectorAll("fieldset.aecrit").forEach(function(f){ if(!state.a[aeKey(i,f.dataset.c)]) out.push(f); });
+  var tx=box.querySelector("textarea"); if(String(tx.value||"").trim()==="") out.push(tx);
+  return out;
+}
+function aePdf(i,line){
+  line("Auto-evaluation :");
+  AEM[i].forEach(function(c){ var v=state.a[aeKey(i,c)]; line("- "+AEC[c][1]+" : "+(v?AEP[v-1]:"(non renseignee)")); });
+  line("- A ameliorer : "+(state.a[aeTxt(i)]||"(vide)"));
+}
+function aeHtml(i){
+  return '<p class="src"><b>Auto-évaluation :</b> '+AEM[i].map(function(c){ var v=state.a[aeKey(i,c)]; return esc2(AEC[c][1])+' → <b>'+(v?AEP[v-1]:"non renseignée")+'</b>'; }).join(" · ")+(state.a[aeTxt(i)]?' · <i>À améliorer : '+esc2(state.a[aeTxt(i)])+'</i>':'')+'</p>';
+}
+
+var S=[];
+var TT=[["Je repère les erreurs du podium","Je corrige le podium"],["Je contrôle les étiquettes"],["Je place les produits","Je calcule les facings","Je fais le réassort"],["Je repère les farces","Je réécris les répliques"],["Je choisis le bon produit","J'argumente","Je propose une vente complémentaire"],["Je décide pour chaque client","Je parle au client n°7"],["Je repère les erreurs de l'affiche","Je corrige l'affiche"],["Je calcule les quantités","Je choisis les bonnes pratiques"],["Je classe les idées d'ambiance","Je réponds à la problématique"]];
+M.forEach(function(m,i){
+  var art=document.getElementById("m"+(i+1)), body=art.querySelector(".mbody");
+  var tasks=[].slice.call(body.children).filter(function(e){return e.classList.contains("task");});
+  var docs=[].slice.call(body.children).filter(function(e){return e.classList.contains("doc")||e.classList.contains("grid2");});
+  var digit=body.querySelector(".digitbox");
+  // exercice sans champ à remplir (cases à cocher seulement) : case de confirmation
+  tasks.forEach(function(t,k){
+    if(!t.querySelector("input:not([type=checkbox]),select,textarea")){
+      var key="m"+(i+1)+"_ok"+k, lab=document.createElement("label");
+      lab.className="confirm"; lab.innerHTML='<input type="checkbox" class="must" data-k="'+key+'" data-label="Exercice terminé"> J\'ai lu chaque ligne et coché tout ce qui doit l\'être.';
+      t.appendChild(lab); var cb=lab.querySelector("input"); cb.checked=!!state.a[key];
+      cb.addEventListener("change",function(){state.a[key]=cb.checked;save();refresh(i);});
+    }
+  });
+  var steps=tasks.map(function(t,k){
+    var title=(TT[i]&&TT[i][k])||"Exercice "+(k+1);
+    return {title:title, el:t, scope:k===0?docs.concat([t]):[t]};
+  });
+  steps.push({title:"Mon chiffre du code", el:digit, scope:[], kind:"digit"}); var aeBox=buildAE(i); digit.after(aeBox); steps.push({title:"Mon auto-évaluation", el:aeBox, scope:[], kind:"ae"});
+  // barre d'étapes + titre + navigation
+  var bar=document.createElement("div"); bar.className="stepbar"; bar.setAttribute("aria-label","Étapes de la mission");
+  var stitle=document.createElement("p"); stitle.className="steptitle";
+  var story=body.querySelector(".story"); story.after(bar); bar.after(stitle);
+  var nav=document.createElement("div"); nav.className="stepnav";
+  nav.innerHTML='<button class="btn ghost prev" type="button">← Précédent</button><span class="need" role="status"></span><button class="btn next" type="button">Suivant →</button>';
+  body.appendChild(nav);
+  var nextm=document.createElement("div"); nextm.className="nextm"; nextm.hidden=true; body.appendChild(nextm);
+  var lockNote=document.createElement("div"); lockNote.className="locked-note"; lockNote.textContent="🔒 Termine d'abord la mission "+i+" (chiffre validé) pour ouvrir celle-ci."; art.insertBefore(lockNote,body);
+  S[i]={aeBox:aeBox,art:art,body:body,steps:steps,bar:bar,stitle:stitle,nav:nav,nextm:nextm,lockNote:lockNote};
+  nav.querySelector(".prev").addEventListener("click",function(){ go(i,cur(i)-1); });
+  nav.querySelector(".next").addEventListener("click",function(){
+    var ms=missing(i,cur(i));
+    if(ms.length){ ms.forEach(function(el){el.classList.add("missing");}); ms[0].scrollIntoView({behavior:"smooth",block:"center"}); setTimeout(function(){try{ms[0].focus({preventScroll:true});}catch(e){}},350);
+      var nd=nav.querySelector(".need"); nd.className="need ko"; if(S[i].steps[cur(i)].kind==="digit"){ nd.textContent="⚠️ Trouve d'abord le bon chiffre de la mission avant de passer à ton auto-évaluation."; return; } if(S[i].steps[cur(i)].kind==="ae"){ nd.textContent="⚠️ Complète ton auto-évaluation (encadrée en rouge) pour terminer la mission."; return; } nd.textContent="⚠️ Il te reste "+ms.length+" réponse"+(ms.length>1?"s":"")+" à compléter (encadrée"+(ms.length>1?"s":"")+" en rouge) avant de passer à la suite."; return; }
+    state.smax[i]=Math.max(state.smax[i]||0,cur(i)+1); go(i,cur(i)+1);
+  });
+  art.querySelector(".check").addEventListener("click",function(){ setTimeout(function(){ evalPassed(i); paint(i); if(S[i+1]) paint(i+1); },0); });
+});
+M.forEach(function(_,q){ state.passed[q]=state.digits[q]!==undefined && aeDone(q); }); save();
+function maxS(i){ var n=S[i].steps.length; return (state.unlockAll||state.passed[i])?n-1:Math.min(state.smax[i]||0,n-1); }
+function cur(i){ return Math.min(state.step[i]||0,maxS(i)); }
+function missing(i,k){
+  var kd=S[i].steps[k].kind; if(kd==="digit") return state.digits[i]!==undefined?[]:[S[i].art.querySelector(".digitbox input")]; if(kd==="ae") return aeMissing(i);
+  var out=[]; S[i].steps[k].scope.forEach(function(sc){
+    sc.querySelectorAll("input:not([type=checkbox]),select,textarea,input.must").forEach(function(el){ if(!filledEl(el)) out.push(el.classList.contains("must")?el.closest("label"):el); });
+  }); return out;
+}
+function go(i,k){ state.step[i]=Math.max(0,k); save(); paint(i); S[i].art.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"}); }
+function refresh(i){
+  var s=S[i], k=cur(i), nd=s.nav.querySelector(".need"); var kd=s.steps[k].kind, ms=missing(i,k); nd.className="need";
+  if(kd==="digit") nd.textContent=ms.length?"🔢 Trouve le bon chiffre pour passer à ton auto-évaluation":"✅ Chiffre trouvé : clique sur Suivant pour t'auto-évaluer";
+  else if(kd==="ae") nd.textContent=ms.length?"📋 Encore "+ms.length+" élément"+(ms.length>1?"s":"")+" à compléter dans ton auto-évaluation":"✅ Auto-évaluation terminée";
+  else nd.textContent=ms.length?"✏️ Encore "+ms.length+" réponse"+(ms.length>1?"s":"")+" à compléter":"✅ Exercice complet : clique sur Suivant";
+  s.body.querySelectorAll(".missing").forEach(function(el){ if(ms.indexOf(el)<0) el.classList.remove("missing"); });
+}
+function paint(i){
+  var s=S[i], lock=isLocked(i);
+  s.art.classList.toggle("locked",lock); s.art.hidden=lock; s.lockNote.hidden=true;
+  [1,2,3].forEach(function(p){ var sec=document.getElementById("pole"+p); if(sec) sec.hidden=!M.some(function(m,q){ return m.pole===p && !isLocked(q); }); });
+  if(lock) return;
+  var n=s.steps.length, k=cur(i), mx=maxS(i);
+  s.steps.forEach(function(st,j){ st.el.hidden=(j!==k); });
+  s.bar.innerHTML=s.steps.map(function(st,j){ var c=j===k?"cur":(j<mx||state.passed[i])?"ok":""; return '<button type="button" data-j="'+j+'" class="'+c+'" '+(j>mx?"disabled":"")+' aria-current="'+(j===k?"step":"false")+'"><span>'+(c==="ok"?"✓":(j+1))+'</span>'+st.title+'</button>'; }).join("");
+  s.bar.querySelectorAll("button").forEach(function(b){ b.addEventListener("click",function(){ go(i,+b.dataset.j); }); });
+  s.stitle.textContent="Étape "+(k+1)+" sur "+n+" · "+s.steps[k].title;
+  s.nav.querySelector(".prev").style.visibility=k>0?"visible":"hidden";
+  s.nav.querySelector(".next").hidden=(k===n-1);
+  var done=!!state.passed[i] && k===n-1;
+  s.nextm.hidden=!done;
+  if(done) s.nextm.innerHTML=S[i+1]?'<b>🎉 Mission '+(i+1)+' terminée !</b><button class="btn" type="button">Mission suivante : '+M[i+1].title+' →</button>':'<b>🎉 Toutes les missions sont terminées !</b><a class="btn" href="#bocal">Ouvrir le Grand Œuf →</a>';
+  var b=s.nextm.querySelector("button"); if(b) b.addEventListener("click",function(){ paint(i+1); S[i+1].art.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"}); });
+  refresh(i); paintPath();
+}
+function paintPath(){
+  var host=document.getElementById("path"); if(!host||S.length<M.length) return;
+  var now=-1; for(var q=0;q<M.length;q++){ if(!state.passed[q]){ now=q; break; } }
+  var names={1:"Mettre en valeur l'offre de Pâques (BC2)",2:"Conseiller le client et valoriser les produits (BC3)",3:"Animer et créer l'ambiance (BC2)"};
+  host.innerHTML=[1,2,3].map(function(p){
+    return '<div class="pgrp"><h3><b>Pôle '+p+'</b> · '+names[p]+'</h3>'+M.map(function(m,q){ if(m.pole!==p) return "";
+      var st=state.passed[q]?"done":isLocked(q)?"lock":"now", ic=st==="done"?"✓":st==="lock"?"🔒":(q+1);
+      return '<button class="pm '+st+'" type="button" data-go="'+q+'"><span class="ic">'+ic+'</span><span>Mission '+(q+1)+(st==="lock"?" · ❓ mission secrète":" · "+m.title)+'<small>'+(st==="done"?"Terminée · chiffre trouvé":st==="lock"?"Se débloque après la mission "+q:"À faire maintenant")+'</small></span></button>'; }).join("")+'</div>';
+  }).join("");
+  host.querySelectorAll(".pm").forEach(function(b){ b.addEventListener("click",function(){ var q=+b.dataset.go; if(isLocked(q)){ toast("🔒 Termine d'abord la mission "+q+" pour ouvrir la mission "+(q+1)+"."); return; } S[q].art.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"}); }); });
+  var cb=document.getElementById("continueBtn");
+  if(cb){ if(now<0){ cb.textContent="🔓 Ouvrir le Grand Œuf"; cb.href="#bocal"; } else { cb.textContent="▶ Continuer : Mission "+(now+1)+" · "+M[now].title; cb.href="#m"+(now+1); } }
+}
+
+document.addEventListener("input",live); document.addEventListener("change",live);
+function live(e){ var a=e.target.closest&&e.target.closest(".mission"); if(a){ var i=+a.id.slice(1)-1; setTimeout(function(){refresh(i);},0); } }
+document.addEventListener("click",function(e){ var l=e.target.closest(".mission.locked"); if(l){ toast("🔒 Termine d'abord la mission "+(+l.id.slice(1)-1)+" pour ouvrir la mission "+l.id.slice(1)+"."); } });
+save(); S.forEach(function(_,i){ paint(i); }); paintPath();
+
+/* ---------- Espace enseignant ---------- */
+var COR="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";
+function decor(pw){ var key=new TextEncoder().encode(pw), h=0x811c9dc5>>>0; for(var q=0;q<key.length;q++){ h^=key[q]; h=Math.imul(h,0x01000193)>>>0; } var x=h||1;
+  var raw=atob(COR), out=new Uint8Array(raw.length);
+  for(var p=0;p<raw.length;p++){ x^=x<<13; x>>>=0; x^=x>>>17; x^=x<<5; x>>>=0; out[p]=raw.charCodeAt(p)^(x&255); }
+  var t=new TextDecoder().decode(out); return t.indexOf("CORRIGE|")===0?t.slice(8):null; }
+var EXP=null;
+function normNum(v){ var t=String(v==null?"":v).replace(/€|eur|\/kg|kg|\s/gi,"").replace(",","."); return t===""||isNaN(+t)?null:+t; }
+function esc2(t){ return String(t==null?"":t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+function grade(k,e){ var v=state.a[k], sv=String(v==null?"":v).trim(), low=sv.toLowerCase();
+  if(e.t==="sel") return sv===e.v?1:0;
+  if(e.t==="num"){ var n=normNum(sv); return n!==null&&Math.abs(n-e.v)<0.006?1:0; }
+  if(e.t==="dash") return /^(—|–|-|\/|aucun|pas de prix.*)$/i.test(sv)?1:0;
+  if(e.t==="zero") return /^(0|0,00|0\.00|—|–|-|\/)$/.test(sv)?1:0;
+  if(e.t==="re") return new RegExp(e.v,"i").test(sv)?1:0;
+  if(e.t==="has") return low.indexOf(e.v)>=0?1:0;
+  if(e.t==="chk") return state.a[e.ok]&&(!!v)===e.v?1:0;
+  if(e.t==="last"){ var ns=sv.replace(/,/g,".").match(/\d+(\.\d+)?/g); if(!ns) return 0; return Math.abs(+ns[ns.length-1]-e.v)<0.006?1:0; }
+  return -1; }
+function shown(k,e){ var v=state.a[k]; if(e.t==="chk") return v?"☑ coché":"☐ non coché"; var t=String(v==null?"":v).trim(); return t?esc2(t):'<i style="color:var(--muted)">(vide)</i>'; }
+function autoCorrect(){
+  if(!EXP) return ""; var tot=0,ok=0;
+  var nom=((state.a.id_prenom||"")+" "+(state.a.id_nom||"")).trim()||"(nom non renseigné)";
+  var body=M.map(function(m,i){ var mt=0,mo=0;
+    var rows=EXP.filter(function(x){return x.m===i+1;}).map(function(x){ var g=grade(x.k,x.e), el=document.querySelector('[data-k="'+x.k+'"]'), lab=x.l||(el&&el.dataset.label)||x.k;
+      if(g>=0){ mt++; tot++; if(g){ mo++; ok++; } }
+      return '<tr><td>'+esc2(lab)+'</td><td>'+shown(x.k,x.e)+'</td><td>'+x.w+'</td><td style="text-align:center;font-size:1.2rem">'+(g===1?"✅":g===0?"❌":"👁️")+'</td></tr>'; }).join("");
+    var dg=state.digits[i]!==undefined?"✅ chiffre trouvé ("+(state.a["essais_m"+(i+1)]||0)+" essai(s))":"❌ chiffre non trouvé";
+    return '<h3>Mission '+(i+1)+' · '+m.title+' — '+mo+'/'+mt+'</h3><p class="src">'+dg+'</p>'+aeHtml(i)+'<div class="tw-scroll"><table><tr><th>Question</th><th>Réponse de l\'élève</th><th>Réponse attendue</th><th>Résultat</th></tr>'+rows+'</table></div>';
+  }).join("");
+  return '<div class="cor-code">Correction automatique · '+esc2(nom)+'<br>Questions fermées : <b>'+ok+' / '+tot+'</b> ('+(tot?Math.round(ok*100/tot):0)+' %) · Grand Œuf : '+(state.final?"ouvert ✅":"fermé")+'</div><p class="src">✅ juste · ❌ faux · 👁️ réponse rédigée, à lire et à évaluer par l\'enseignante (non comptée dans le score). La correction porte sur le travail enregistré <b>sur cet ordinateur</b>.</p>'+body;
+}
+function unlockLabel(){ $("#unlockBtn").textContent=state.unlockAll?"🔒 Rebloquer les missions et les étapes":"🔓 Débloquer toutes les missions et les étapes (cet ordinateur)"; }
+function profTry(){ var v=($("#profcode").value||"").trim().toUpperCase(), html=v?decor(v):null, msg=$("#profmsg");
+  if(html){ var parts=html.split("\u0001"); html=parts[0]; try{ EXP=JSON.parse(parts[1]||"null"); }catch(e){ EXP=null; }
+    $("#autocor").innerHTML=autoCorrect(); $("#autocor").hidden=false; $("#corrige").innerHTML='<h2 style="margin-top:6px">Corrigé complet</h2>'+html; $("#corrige").hidden=false; $("#profhide").hidden=false; $("#profactions").hidden=false; unlockLabel(); $("#profcode").value=""; msg.className="fb ok"; msg.textContent="Corrigé affiché."; }
+  else { $("#corrige").hidden=true; msg.className="fb ko"; msg.textContent="Code incorrect."; } }
+$("#profbtn").addEventListener("click",profTry);
+$("#profcode").addEventListener("keydown",function(e){ if(e.key==="Enter") profTry(); });
+$("#profhide").addEventListener("click",function(){ $("#autocor").hidden=true; $("#autocor").innerHTML=""; $("#corrige").hidden=true; $("#corrige").innerHTML=""; $("#profhide").hidden=true; $("#profactions").hidden=true; $("#profmsg").textContent=""; });
+$("#unlockBtn").addEventListener("click",function(){ state.unlockAll=!state.unlockAll; save(); unlockLabel(); S.forEach(function(_,i){ paint(i); }); $("#profmsg2").className="fb ok"; $("#profmsg2").textContent=state.unlockAll?"Missions débloquées sur cet ordinateur.":"Missions rebloquées."; });
+var armed=false;
+$("#resetBtn").addEventListener("click",function(){
+  if(!armed){ armed=true; this.textContent="⚠️ Confirmer : tout effacer ?"; $("#profmsg2").className="fb ko"; $("#profmsg2").textContent="Clique encore une fois pour confirmer. Les réponses de l'élève seront perdues.";
+    var me=this; setTimeout(function(){ armed=false; me.textContent="🧹 Effacer tout le travail enregistré sur cet ordinateur"; },5000); return; }
+  try{ localStorage.removeItem(KEY); }catch(e){} location.reload();
+});
+
+})();
+</script>
+</body>
+</html>
